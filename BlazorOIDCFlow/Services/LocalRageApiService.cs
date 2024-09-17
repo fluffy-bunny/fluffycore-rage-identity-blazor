@@ -16,5 +16,10 @@ namespace BlazorOIDCFlow.Services
         {
             return await _httpClient.GetFromJsonAsync<Manifest?>("sample-data/manifest.json");
         }
+
+        public async Task<StartExternalLoginResponse?> StartExternalLoginAsync(StartExternalLoginRequest request)
+        {
+            return await _httpClient.GetFromJsonAsync<StartExternalLoginResponse?>("sample-data/start-external-login-response.json");
+        }
     }
 }

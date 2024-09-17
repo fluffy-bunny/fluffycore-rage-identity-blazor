@@ -1,4 +1,9 @@
-﻿<div class="card">
+﻿@using BlazorOIDCFlow.Contracts
+@using BlazorOIDCFlow.Services
+@inject IRageApiService RageApiService
+@inject RedirectService RedirectService
+
+<div class="card">
     <div class="card-header">
         Sign In
         <button class="tab-option" @onclick="HandleSignupClick">Sign Up</button>
@@ -65,10 +70,21 @@
     [CascadingParameter]
     public OIDCModel Model { get; set; }
 
-    private void HandleButtonClick(string slug)
+    private async Task HandleButtonClick(string slug)
     {
         // Handle the button click event here
         Console.WriteLine($"Button clicked: {slug}");
+        var request = new StartExternalLoginRequest
+        {
+            Slug = slug,
+            Directive = "login"
+        };
+        var response = await RageApiService.StartExternalLoginAsync(request);
+        if (response != null)
+        {
+            Console.WriteLine($"Response: {response}");
+            RedirectService.RedirectToUrl(response.RedirectUri);
+        }
     }
     private async void HandleSignupClick()
     {
