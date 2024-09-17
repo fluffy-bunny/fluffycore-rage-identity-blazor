@@ -1,0 +1,18 @@
+﻿@page "/"
+@using System.Text.Json.Serialization
+@inject HttpClient Http
+
+<CascadingValue Value="Model">
+    <OIDCContainer />
+</CascadingValue>
+
+@code {
+    public OIDCModel Model { get; set; } = new OIDCModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var manifest = await Http.GetFromJsonAsync<Manifest>("sample-data/manifest.json");
+        Model.Manifest = manifest;
+
+    }
+}

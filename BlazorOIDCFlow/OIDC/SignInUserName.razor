@@ -1,0 +1,84 @@
+﻿<div class="card">
+    <div class="card-header">
+        Sign In
+        <button class="tab-option" @onclick="HandleSignupClick">Sign Up</button>
+    </div>
+    <div class="card-body">
+    <form>
+         <div class="form-group mb-3">
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       placeholder="Enter email" 
+                       @bind-value="Model.UserName" />
+  
+        </div>
+            <!-- Wizard Buttons -->
+            <div class="d-flex justify-content-between mb-3 wizard-buttons">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <div>
+                    <button type="button" class="btn btn-secondary me-2">
+                        Back
+                    </button>
+                    <button type="button" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+
+   
+        <div class="form-group">
+            <button type="button" class="btn btn-link mt-3" @onclick="HandleForgotPasswordClick">Forgot Password?</button>
+        </div>
+
+
+    </form>
+        <!-- Separator -->
+        <hr />
+        <!-- Paragraph -->
+        <p class="text-center">or login with a social provider</p>
+
+        <div class="d-flex justify-content-around social-buttons">
+    @if (Model?.Manifest?.SocialIdps != null)
+    {
+        @foreach (var idp in Model.Manifest.SocialIdps)
+        {
+            <button type="button" class="btn btn-info" @onclick="() => HandleButtonClick(idp.Slug)">
+                @idp.Name
+            </button>
+
+        }
+    }
+    else
+    {
+        <p>No social IDPs available.</p>
+    }
+        </div>
+    </div>
+    
+</div>
+
+@code {
+    [Parameter]
+    public int Step { get; set; }
+    [Parameter]
+    public EventCallback<int> SetStep { get; set; }
+
+    [CascadingParameter]
+    public OIDCModel Model { get; set; }
+
+    private void HandleButtonClick(string slug)
+    {
+        // Handle the button click event here
+        Console.WriteLine($"Button clicked: {slug}");
+    }
+    private async void HandleSignupClick()
+    {
+        // Handle the signup button click event here
+        Console.WriteLine("Sign Up button clicked");
+        // Call SetStep with the desired step value
+        await SetStep.InvokeAsync(2);
+    }
+    private void HandleForgotPasswordClick(){
+        Console.WriteLine("HandleForgotPasswordClick Up button clicked");
+    }
+
+}

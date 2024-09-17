@@ -1,0 +1,31 @@
+﻿<div class="container center-card">
+    @{
+        switch (Step)
+        {
+            case 1:
+                <SignInUserName SetStep="SetStep" />
+                break;
+            case 2:
+                <SignUp SetStep="SetStep" />
+                break;
+        }
+    }
+   
+
+   
+
+
+</div>
+
+@code {
+    [CascadingParameter]
+    public OIDCModel Model { get; set; }
+
+    public int Step { get; set; } = 1;
+
+    private void SetStep(int step)
+    {
+        Step = step;
+        StateHasChanged();
+    }
+}
