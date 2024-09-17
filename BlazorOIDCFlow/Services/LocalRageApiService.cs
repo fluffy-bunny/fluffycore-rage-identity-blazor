@@ -21,5 +21,17 @@ namespace BlazorOIDCFlow.Services
         {
             return await _httpClient.GetFromJsonAsync<StartExternalLoginResponse?>("sample-data/start-external-login-response.json");
         }
+
+        public async Task<VerifyUsernameResponse?> VerifyUsernameAsync(VerifyUsernameRequest request)
+        {
+            if (request.UserName == "ghstahl@gmail.com")
+            {
+                // Add your logic here
+                return await _httpClient.GetFromJsonAsync<VerifyUsernameResponse?>("sample-data/verify-username-response.json");
+
+            }
+            // return 404
+            return null;
+        }
     }
 }

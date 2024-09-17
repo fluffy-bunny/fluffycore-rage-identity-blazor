@@ -2,6 +2,14 @@
 
 namespace BlazorOIDCFlow.Data
 {
+    public enum OIDCPage
+    {
+        SigninUserName,
+        SigninUserNamePassword,
+        SignUpUserName,
+        SignUpUserNamePassword
+    }
+
     public class OIDCModel
     {
         public string? UserName { get; set; }
@@ -38,5 +46,21 @@ namespace BlazorOIDCFlow.Data
     {
         public string Slug { get; set; } = "";
         public string Directive { get; set; }
+    }
+    public class VerifyUsernameRequest
+    {
+        [JsonPropertyName("userName")]
+
+        public string UserName { get; set; }
+    }
+    public class VerifyUsernameResponse
+    {
+        [JsonPropertyName("userName")]
+
+        public string UserName { get; set; }
+
+        [JsonPropertyName("passkeyAvailable")]
+
+        public bool PasskeyAvailable { get; set; }
     }
 }

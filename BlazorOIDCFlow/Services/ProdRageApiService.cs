@@ -59,6 +59,32 @@ namespace BlazorOIDCFlow.Services
                 return null;
             }
         }
+        public async Task<VerifyUsernameResponse?> VerifyUsernameAsync(VerifyUsernameRequest request)
+        {
+            var csrfToken = await GetCSRFAsync();
+            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/verify-username")
+            {
+                Content = requestBody
+            };
+
+            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
+
+            var response = await _httpClient.SendAsync(httpRequestMessage);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseData);
+                return JsonSerializer.Deserialize<VerifyUsernameResponse>(responseData);
+            }
+            else
+            {
+                Console.Error.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                return null;
+            }
+        }
 
         private async Task<string> GetCSRFAsync()
         {

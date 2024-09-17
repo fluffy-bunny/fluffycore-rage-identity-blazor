@@ -1,4 +1,9 @@
-﻿<div class="card">
+﻿@using BlazorOIDCFlow.Contracts
+@using BlazorOIDCFlow.Services
+@inject IRageApiService RageApiService
+@inject RedirectService RedirectService
+
+<div class="card">
     <div class="card-header">
         Sign Up
         <button class="tab-option" @onclick="HandleSigninClick">Sign In</button>
@@ -14,13 +19,9 @@
   
         </div>
             <!-- Wizard Buttons -->
-            <div class="d-flex justify-content-between mb-3 wizard-buttons">
-                <button type="button" class="btn btn-secondary">Cancel</button>
+            <div class="d-flex justify-content-end mb-3 wizard-buttons">
                 <div>
-                    <button type="button" class="btn btn-secondary me-2">
-                        Back
-                    </button>
-                    <button type="button" class="btn btn-primary">Next</button>
+                    <button type="button" class="btn btn-primary" @onclick="HandleNextClick">Next</button>
                 </div>
             </div>
 
@@ -58,9 +59,9 @@
 
 @code {
     [Parameter]
-    public int Step { get; set; }
+    public EventCallback<string> ShowInfoMessage { get; set; }
     [Parameter]
-    public EventCallback<int> SetStep { get; set; }
+    public EventCallback<OIDCPage> SetStep { get; set; }
 
     [CascadingParameter]
     public OIDCModel Model { get; set; }
@@ -73,12 +74,30 @@
     private async void HandleSigninClick()
     {
         // Handle the signup button click event here
-        Console.WriteLine("Sign Up button clicked");
+        Console.WriteLine("SigninUserName button clicked");
         // Call SetStep with the desired step value
-        await SetStep.InvokeAsync(1);
+        await SetStep.InvokeAsync(OIDCPage.SigninUserName);
     }
     private void HandleForgotPasswordClick(){
         Console.WriteLine("HandleForgotPasswordClick Up button clicked");
     }
-
+    private async void HandleNextClick()
+    {
+        // Handle the next button click event here
+        Console.WriteLine("Next button clicked");
+        var request = new VerifyUsernameRequest
+            {
+                UserName = Model.UserName
+            };
+        var response = await RageApiService.VerifyUsernameAsync(request);
+        if (response != null)
+        {
+            // show info message
+            await ShowInfoMessage.InvokeAsync("User already exists");
+            await SetStep.InvokeAsync(OIDCPage.SigninUserNamePassword);
+            return;
+        }
+        // username doesn't exist so we can proceed to the next step
+        await SetStep.InvokeAsync(OIDCPage.SignUpUserNamePassword);
+    }
 }

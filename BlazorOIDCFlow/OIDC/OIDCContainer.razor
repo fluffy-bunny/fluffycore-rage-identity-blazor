@@ -1,17 +1,25 @@
 ﻿<div class="container center-card">
     @{
-        switch (Step)
+        switch (OIDCPage)
         {
-            case 1:
-                <SignInUserName SetStep="SetStep" />
+            case OIDCPage.SigninUserName:
+                <SignInUserName SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
                 break;
-            case 2:
-                <SignUp SetStep="SetStep" />
+            case OIDCPage.SignUpUserName:
+                <SignUpUserName SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                break;
+            case OIDCPage.SigninUserNamePassword:
+                <SignInUserNamePassword SetStep="SetStep" />
                 break;
         }
     }
-   
 
+    <div class="modal" style="display:@(showInfoMessage ? "block" : "none")">
+        <div class="modal-content">
+            <span class="close" @onclick="CloseInfoMessage">&times;</span>
+            <p>@infoMessage</p>
+        </div>
+    </div>
    
 
 
@@ -21,11 +29,24 @@
     [CascadingParameter]
     public OIDCModel Model { get; set; }
 
-    public int Step { get; set; } = 1;
-
-    private void SetStep(int step)
+    public OIDCPage OIDCPage { get; set; } = OIDCPage.SigninUserName;
+    private bool showInfoMessage = false;
+    private string infoMessage = string.Empty;
+    private void SetStep(OIDCPage oidcPage)
     {
-        Step = step;
+        OIDCPage = oidcPage;
+        StateHasChanged();
+    }
+    private void ShowInfoMessage(string message)
+    {
+        infoMessage = message;
+        showInfoMessage = true;
+        StateHasChanged();
+    }
+
+    private void CloseInfoMessage()
+    {
+        showInfoMessage = false;
         StateHasChanged();
     }
 }
