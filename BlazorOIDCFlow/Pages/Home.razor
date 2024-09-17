@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using System.Text.Json.Serialization
+@using BlazorOIDCFlow.Contracts
 @inject HttpClient Http
+@inject IRageApiService RageApiService
 
 <CascadingValue Value="Model">
     <OIDCContainer />
@@ -11,7 +13,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var manifest = await Http.GetFromJsonAsync<Manifest>("sample-data/manifest.json");
+        var manifest = await RageApiService.GetManifestAsync();
         Model.Manifest = manifest;
 
     }
