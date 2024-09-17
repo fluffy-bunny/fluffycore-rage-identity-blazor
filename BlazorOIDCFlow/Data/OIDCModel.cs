@@ -63,4 +63,16 @@ namespace BlazorOIDCFlow.Data
 
         public bool PasskeyAvailable { get; set; }
     }
+    public class VerifyPasswordStrengthRequest
+    {
+        [JsonPropertyName("password")]
+
+        public string Password { get; set; }
+    }
+    public class VerifyPasswordStringResponse
+    {
+        [JsonPropertyName("valid")]
+
+        public bool Valid { get; set; }
+    }
 }

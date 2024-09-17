@@ -7,5 +7,7 @@ namespace BlazorOIDCFlow.Contracts
         public Task<Manifest?> GetManifestAsync();
         public Task<StartExternalLoginResponse?> StartExternalLoginAsync(StartExternalLoginRequest request);
         public Task<VerifyUsernameResponse?> VerifyUsernameAsync(VerifyUsernameRequest request);
+        public Task<VerifyPasswordStringResponse?> VerifyPasswordStrengthAsync(VerifyPasswordStrengthRequest request);
+
     }
 }

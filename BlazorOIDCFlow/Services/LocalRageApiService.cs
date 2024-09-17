@@ -22,6 +22,11 @@ namespace BlazorOIDCFlow.Services
             return await _httpClient.GetFromJsonAsync<StartExternalLoginResponse?>("sample-data/start-external-login-response.json");
         }
 
+        public async Task<VerifyPasswordStringResponse?> VerifyPasswordStrengthAsync(VerifyPasswordStrengthRequest request)
+        {
+            return await _httpClient.GetFromJsonAsync<VerifyPasswordStringResponse?>("sample-data/verify-password-strength-response.json");
+        }
+
         public async Task<VerifyUsernameResponse?> VerifyUsernameAsync(VerifyUsernameRequest request)
         {
             if (request.UserName == "ghstahl@gmail.com")
