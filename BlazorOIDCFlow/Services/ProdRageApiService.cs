@@ -111,7 +111,7 @@ namespace BlazorOIDCFlow.Services
             }
         }
 
-        public async Task<PasswordResetStartResponse?> PasswordResetStartAsync(LoginPhaseOneRequest request)
+        public async Task<PasswordResetStartResponse?> PasswordResetStartAsync(PasswordResetStartRequest request)
         {
             var csrfToken = await GetCSRFAsync();
             var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");

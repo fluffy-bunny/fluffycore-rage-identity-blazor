@@ -102,12 +102,15 @@ code {
     color: #c02d76;
 }
 
-
 .center-card {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+}
+
+.fixed-width-card {
+    width: 400px; /* Set your desired fixed width here */
 }
 
 .social-buttons button,

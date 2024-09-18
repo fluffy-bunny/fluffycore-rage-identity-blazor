@@ -31,8 +31,16 @@ namespace BlazorOIDCFlow.Services
         {
             if (request.Email == "ghstahl@gmail.com")
             {
-                // Add your logic here
-                return await _httpClient.GetFromJsonAsync<LoginPhaseOneResponse?>("sample-data/login-phase-one-response.json");
+                return new LoginPhaseOneResponse
+                {
+                    Directive = "directiveDisplayPasswordPage",
+                    DirectiveDisplayPasswordPage = new DirectiveDisplayPasswordPage
+                    {
+                        Email = request.Email,
+                        HasPasskey = false
+                    }
+                };
+                
             }
             if (request.Email.Contains("@mapped.com"))
             {
@@ -57,7 +65,7 @@ namespace BlazorOIDCFlow.Services
             };
         }
 
-        public async Task<PasswordResetStartResponse?> PasswordResetStartAsync(LoginPhaseOneRequest request)
+        public async Task<PasswordResetStartResponse?> PasswordResetStartAsync(PasswordResetStartRequest request)
         {
             var response = new PasswordResetStartResponse
             {

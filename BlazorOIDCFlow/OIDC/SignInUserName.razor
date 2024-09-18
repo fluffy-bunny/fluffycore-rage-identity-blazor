@@ -1,37 +1,34 @@
-﻿@using BlazorOIDCFlow.Contracts
-@using BlazorOIDCFlow.Services
+﻿
 @inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 
 <div class="card">
     <div class="card-header">
         Sign In
-        <button class="tab-option" @onclick="HandleSignupClick">Sign Up</button>
     </div>
     <div class="card-body">
-    <form>
-         <div class="form-group mb-3">
-                <input type="email"
-                       class="form-control"
-                       id="email"
-                       placeholder="Enter email" 
-                       @bind-value="Model.UserName" />
-  
-        </div>
+        <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
+
+             <div class="form-group mb-3">
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="email" required @bind-value="emailModel.Email">
+                    <label for="email">Email address</label>
+                </div>
+                
+            </div>
             <!-- Wizard Buttons -->
-            <div class="d-flex justify-content-end mb-3 wizard-buttons">
+
+            <div class="d-flex justify-content-between mb-3 wizard-buttons">
                 <div>
-                    <button type="button" class="btn btn-primary" @onclick="HandleNextClick">Next</button>
+                    <button type="button" class="btn btn-link" @onclick="HandleSignupClick">
+                        Create Account
+                    </button>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Next</button>
                 </div>
             </div>
-
-   
-        <div class="form-group">
-            <button type="button" class="btn btn-link mt-3" @onclick="HandleForgotPasswordClick">Forgot Password?</button>
-        </div>
-
-
-    </form>
+        </EditForm>
         <!-- Separator -->
         <hr />
         <!-- Paragraph -->
@@ -59,12 +56,23 @@
 
 @code {
 
+    public class EmailModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+    }
+    private EmailModel emailModel = new EmailModel();
+    protected override void OnInitialized()
+    {
+        emailModel.Email = Model.Email;
+    }
     [Parameter]
     public EventCallback<OIDCPage> SetStep { get; set; }
 
     [Parameter]
     public EventCallback<string> ShowInfoMessage { get; set; }
-    
+
 
     [CascadingParameter]
     public OIDCModel Model { get; set; }
@@ -92,26 +100,47 @@
         // Call SetStep with the desired step value
         await SetStep.InvokeAsync(OIDCPage.SignUpUserName);
     }
-    private void HandleForgotPasswordClick(){
-        Console.WriteLine("HandleForgotPasswordClick Up button clicked");
-    }
 
-    private async void HandleNextClick()
+    private async void HandleValidSubmit()
     {
+        // Handle the form submission
+        Model.Email = emailModel.Email;
         // Handle the next button click event here
         Console.WriteLine("Next button clicked");
-        var request = new VerifyUsernameRequest
+        var request = new LoginPhaseOneRequest
         {
-           UserName = Model.UserName
+            Email = Model.Email
         };
-        var response = await RageApiService.VerifyUsernameAsync(request);
+        var response = await RageApiService.LoginPhaseOneAsync(request);
         if (response == null)
         {
             // show info message
             await ShowInfoMessage.InvokeAsync("Invalid username");
             return;
         }
+
+        if (response.DirectiveDisplayPasswordPage != null)
+        {
+            await SetStep.InvokeAsync(OIDCPage.SigninUserNamePassword);
+            return;
+        }
+        if (response.DirectiveStartExternalLogin != null)
+        {
+            var startExternalLoginResponse = await RageApiService.StartExternalLoginAsync(new StartExternalLoginRequest
+            {
+               Directive = "login",
+               Slug = response.DirectiveStartExternalLogin.Slug
+
+            });
+            if (startExternalLoginResponse != null)
+            {
+                RedirectService.RedirectToUrl(startExternalLoginResponse.RedirectUri);
+                return;
+            }
+            await ShowInfoMessage.InvokeAsync("error with external login");
+            return;
+        }
         // Call SetStep with the desired step value
-        await SetStep.InvokeAsync(OIDCPage.SigninUserNamePassword);
+        await SetStep.InvokeAsync(OIDCPage.SigninUserName);
     }
 }

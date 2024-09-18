@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace BlazorOIDCFlow.Data
 {
@@ -7,16 +8,30 @@ namespace BlazorOIDCFlow.Data
         SigninUserName,
         SigninUserNamePassword,
         SignUpUserName,
-        SignUpUserNamePassword
+        SignUpUserNamePassword,
+        VerifyCode,
+        ForgotPassword,
     }
-
+    public enum Directive
+    {
+        Directive_Unspecified,
+        Directive_ResetPassword,
+        Directive_Login
+    }
     public class OIDCModel
     {
-        public string? UserName { get; set; }
-        public string? Password { get; set; }
-        public Manifest? Manifest { get; set; }
-    }
 
+        public string? Email { get; set; }
+
+
+        public string? Password { get; set; }
+
+        public Manifest? Manifest { get; set; }
+
+        public string Code { get; set; } = "";
+
+        public Directive Directive { get; set; } = Directive.Directive_Unspecified;
+    }
     public class Manifest
     {
         // json is social_idps

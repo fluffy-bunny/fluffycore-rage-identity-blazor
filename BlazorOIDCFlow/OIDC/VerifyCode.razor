@@ -1,0 +1,89 @@
+﻿@inject IRageApiService RageApiService
+@inject RedirectService RedirectService
+
+<div class="card">
+    <div class="card-header">
+        Verify Code
+    </div>
+    <div class="card-body">
+        <p>A verification code has be emailed to @Model.Email If an account exists.</p>
+         <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
+            <div class="form-group mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="code" required @bind-value="verifyCodeModel.Code">
+                    <label for="code">Enter Code</label>
+                </div>
+            </div>
+            
+            <!-- Wizard Buttons -->
+            <div class="d-flex justify-content-end mb-3 wizard-buttons">
+                <div>
+                    <button type="button" class="btn btn-secondary me-2" @onclick="HandleCancelClick">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    public class VerifyCodeModel
+    {
+        [Required]
+        public string Code { get; set; }
+    }
+    private VerifyCodeModel verifyCodeModel = new VerifyCodeModel();
+
+    protected override void OnInitialized()
+    {
+        verifyCodeModel.Code = Model.Code;
+    }
+
+    [Parameter]
+    public EventCallback<OIDCPage> SetStep { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ShowInfoMessage { get; set; }
+
+
+    [CascadingParameter]
+    public OIDCModel Model { get; set; }
+
+    private async void HandleCancelClick(){
+        // Handle the cancel button click event here
+        Console.WriteLine("Cancel button clicked");
+        await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+    }
+    private async void HandleValidSubmit()
+    {
+        Model.Code = verifyCodeModel.Code;
+        // Handle the next button click event here
+        Console.WriteLine("Next button clicked");
+        var request = new VerifyCodeRequest
+        {
+           Code = Model.Code
+        };
+        var response = await RageApiService.VerifyCodeAsync(request);
+        if (response == null)
+        {
+            // show info message
+            await ShowInfoMessage.InvokeAsync("Invalid code");
+            return;
+        }
+        if (Model.Directive == Directive.Directive_ResetPassword)
+        {
+            await SetStep.InvokeAsync(OIDCPage.ForgotPassword);
+            return;
+        }
+        if (response.DirectiveRedirect != null)
+        {
+            RedirectService.RedirectToUrl(response.DirectiveRedirect.RedirectURI);
+            return;
+        }
+        // Call SetStep with the desired step value
+        await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+    }
+}

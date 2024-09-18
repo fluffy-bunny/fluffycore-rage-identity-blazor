@@ -1,4 +1,6 @@
 ﻿<div class="container center-card">
+    <div class="card fixed-width-card">
+
     @{
         switch (OIDCPage)
         {
@@ -11,6 +13,12 @@
             case OIDCPage.SigninUserNamePassword:
                 <SignInUserNamePassword SetStep="SetStep" />
                 break;
+            case OIDCPage.VerifyCode:
+                <VerifyCode SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                break;
+            case OIDCPage.ForgotPassword:
+                <ForgotPassword SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                break;
         }
     }
 
@@ -22,7 +30,7 @@
     </div>
    
 
-
+    </div>
 </div>
 
 @code {

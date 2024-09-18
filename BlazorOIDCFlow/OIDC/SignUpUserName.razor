@@ -1,60 +1,58 @@
-﻿@using BlazorOIDCFlow.Contracts
-@using BlazorOIDCFlow.Services
-@inject IRageApiService RageApiService
+﻿@inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 
 <div class="card">
     <div class="card-header">
         Sign Up
-        <button class="tab-option" @onclick="HandleSigninClick">Sign In</button>
     </div>
     <div class="card-body">
-    <form>
-         <div class="form-group mb-3">
-                <input type="email"
-                       class="form-control"
-                       id="email"
-                       placeholder="Enter email" 
-                       @bind-value="Model.UserName" />
-  
-        </div>
-            <!-- Wizard Buttons -->
-            <div class="d-flex justify-content-end mb-3 wizard-buttons">
-                <div>
-                    <button type="button" class="btn btn-primary" @onclick="HandleNextClick">Next</button>
+        <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
+            <div class="form-group mb-3">
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="email" readonly required @bind-value="Model.Email">
+                    <label for="email">Email address</label>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <div class="form-floating">
+                        <input type="password" class="form-control" id="password" required @bind-value="Model.Password">
+                        <label for="password">Password</label>
                 </div>
             </div>
 
-   
-        <div class="form-group">
-            <button type="button" class="btn btn-link mt-3" @onclick="HandleForgotPasswordClick">Forgot Password?</button>
-        </div>
-
-
-    </form>
+           
+            <!-- Wizard Buttons -->
+            <div class="d-flex justify-content-end mb-3 wizard-buttons">
+                <button type="button" class="btn btn-secondary me-2" @onclick="HandleBackClick">
+                    Back
+                </button>
+                <div>
+                    <button type="submit" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+        </EditForm>
         <!-- Separator -->
         <hr />
         <!-- Paragraph -->
         <p class="text-center">or sign up with a social provider</p>
 
         <div class="d-flex justify-content-around social-buttons">
-    @if (Model?.Manifest?.SocialIdps != null)
-    {
-        @foreach (var idp in Model.Manifest.SocialIdps)
-        {
-            <button type="button" class="btn btn-info" @onclick="() => HandleButtonClick(idp.Slug)">
-                @idp.Name
-            </button>
+            @if (Model?.Manifest?.SocialIdps != null)
+            {
+                @foreach (var idp in Model.Manifest.SocialIdps)
+                {
+                    <button type="button" class="btn btn-info" @onclick="() => HandleButtonClick(idp.Slug)">
+                        @idp.Name
+                    </button>
 
-        }
-    }
-    else
-    {
-        <p>No social IDPs available.</p>
-    }
+                }
+            }
+            else
+            {
+                <p>No social IDPs available.</p>
+            }
         </div>
-    </div>
-    
+    </div> 
 </div>
 
 @code {
@@ -81,15 +79,23 @@
     private void HandleForgotPasswordClick(){
         Console.WriteLine("HandleForgotPasswordClick Up button clicked");
     }
-    private async void HandleNextClick()
+    private async void HandleBackClick()
+    {
+        // Handle the signup button click event here
+        Console.WriteLine("back button clicked");
+        // Call SetStep with the desired step value
+        await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+    }
+    private async void HandleValidSubmit()
     {
         // Handle the next button click event here
         Console.WriteLine("Next button clicked");
-        var request = new VerifyUsernameRequest
-            {
-                UserName = Model.UserName
-            };
-        var response = await RageApiService.VerifyUsernameAsync(request);
+        var request = new SignupRequest
+        {
+            Email = Model.Email,
+            Password = Model.Password
+        };
+        var response = await RageApiService.SignupRequestAsync(request);
         if (response != null)
         {
             // show info message
