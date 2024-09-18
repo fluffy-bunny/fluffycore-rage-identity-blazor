@@ -34,19 +34,6 @@ namespace BlazorOIDCFlow.Data
         public string Name { get; set; } = "";
     }
 
-    /*
-     {"redirectUri":"https://accounts.google.com/o/oauth2/v2/auth?client_id=1096301616546-edbl612881t7rkpljp3qa3juminskulo.apps.googleusercontent.com&nonce=crkrs3chb636s43a8og0&redirect_uri=http%3A%2F%2Flocalhost%3A9044%2Foauth2%2Fcallback&response_type=code&scope=openid+email+profile&state=crkrs3chb636s43a8ofg"}
-    */
-    public class StartExternalLoginResponse
-    {
-        [JsonPropertyName("redirectUri")]
-        public string RedirectUri { get; set; } = "";
-    }
-    public class StartExternalLoginRequest
-    {
-        public string Slug { get; set; } = "";
-        public string Directive { get; set; }
-    }
     public class VerifyUsernameRequest
     {
         [JsonPropertyName("userName")]
@@ -74,5 +61,102 @@ namespace BlazorOIDCFlow.Data
         [JsonPropertyName("valid")]
 
         public bool Valid { get; set; }
+    }
+
+    public class LoginPhaseOneRequest  {
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+
+	}
+    public class LoginPhaseOneResponse
+    {
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; }
+
+        [JsonPropertyName("directiveDisplayPasswordPage")]
+        public DirectiveDisplayPasswordPage? DirectiveDisplayPasswordPage { get; set; }
+
+        [JsonPropertyName("directiveEmailCodeChallenge")]
+        public DirectiveEmailCodeChallenge? DirectiveEmailCodeChallenge { get; set; }
+
+        [JsonPropertyName("directiveStartExternalLogin")]
+        public DirectiveStartExternalLogin? DirectiveStartExternalLogin { get; set; }
+
+    }
+    public class DirectiveDisplayPasswordPage
+    {
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+        [JsonPropertyName("hasPasskey")]
+        public bool HasPasskey { get; set; }
+    }
+    public class DirectiveEmailCodeChallenge
+    {
+        [JsonPropertyName("code")]
+        public string Code { get; set; }
+    }
+    public class DirectiveStartExternalLogin
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+    }
+
+    public class StartExternalIDPLoginRequest  {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; }
+
+        
+    }
+
+    public class StartExternalIDPLoginResponse  {
+        [JsonPropertyName("redirectUri")]
+        public string RedirectUri { get; set; } = "";
+    }
+
+    public class LoginPasswordRequest  {
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = "";
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; } = "";
+    }
+
+    public class LoginPasswordResponse  {
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; }
+
+        [JsonPropertyName("directiveRedirect")]
+        public DirectiveRedirect? DirectiveRedirect { get; set; }
+
+        [JsonPropertyName("directiveEmailCodeChallenge")]
+        public DirectiveEmailCodeChallenge? DirectiveEmailCodeChallenge { get; set; }
+    }
+    public class DirectiveRedirect
+    {
+        [JsonPropertyName("redirectUri")]
+        public string RedirectURI { get; set; } = "";
+
+    }
+
+    public class VerifyCodeRequest  {
+        [JsonPropertyName("code")]
+        public string Code { get; set; } = "";
+        
+    }
+
+    public class VerifyCodeResponse  {
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; } = "";
+
+        [JsonPropertyName("directiveRedirect")]
+        public DirectiveRedirect? DirectiveRedirect { get; set; } 
     }
 }

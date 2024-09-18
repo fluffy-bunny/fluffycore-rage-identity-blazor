@@ -73,12 +73,12 @@
     {
         // Handle the button click event here
         Console.WriteLine($"Button clicked: {slug}");
-        var request = new StartExternalLoginRequest
+        var request = new StartExternalIDPLoginRequest
         {
             Slug = slug,
             Directive = "login"
         };
-        var response = await RageApiService.StartExternalLoginAsync(request);
+        var response = await RageApiService.StartExternalIDPLoginAsync(request);
         if (response != null)
         {
             Console.WriteLine($"Response: {response}");

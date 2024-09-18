@@ -17,9 +17,45 @@ namespace BlazorOIDCFlow.Services
             return await _httpClient.GetFromJsonAsync<Manifest?>("sample-data/manifest.json");
         }
 
-        public async Task<StartExternalLoginResponse?> StartExternalLoginAsync(StartExternalLoginRequest request)
+        public async Task<LoginPasswordResponse?> LoginPasswordAsync(LoginPasswordRequest request)
         {
-            return await _httpClient.GetFromJsonAsync<StartExternalLoginResponse?>("sample-data/start-external-login-response.json");
+            if (request.Email == "ghstahl@gmail.com")
+            {
+                // Add your logic here
+                return await _httpClient.GetFromJsonAsync<LoginPasswordResponse?>("sample-data/login-password-response.json");
+            }
+            return null;
+        }
+
+        public async Task<LoginPhaseOneResponse?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
+        {
+            if (request.Email == "ghstahl@gmail.com")
+            {
+                // Add your logic here
+                return await _httpClient.GetFromJsonAsync<LoginPhaseOneResponse?>("sample-data/login-phase-one-response.json");
+            }
+            if (request.Email.Contains("@mapped.com"))
+            {
+                // Add your logic here
+                return await _httpClient.GetFromJsonAsync<LoginPhaseOneResponse?>("sample-data/login-phase-one-mapped-response.json");
+            }
+            return null;
+        }
+
+        public async Task<StartExternalIDPLoginResponse?> StartExternalIDPLoginAsync(StartExternalIDPLoginRequest request)
+        {
+            return await _httpClient.GetFromJsonAsync<StartExternalIDPLoginResponse?>("sample-data/start-external-login-response.json");
+        
+        }
+
+        public async Task<VerifyCodeResponse?> VerifyCodeAsync(VerifyCodeRequest request)
+        {
+            if (request.Code == "1234")
+            {
+                return await _httpClient.GetFromJsonAsync<VerifyCodeResponse?>("sample-data/verify-code-response.json");
+
+            }
+            return null;
         }
 
         public async Task<VerifyPasswordStringResponse?> VerifyPasswordStrengthAsync(VerifyPasswordStrengthRequest request)
