@@ -42,9 +42,71 @@ namespace BlazorOIDCFlow.Services
             return null;
         }
 
-        public async Task<StartExternalIDPLoginResponse?> StartExternalIDPLoginAsync(StartExternalIDPLoginRequest request)
+        public async Task<PasswordResetFinishResponse?> PasswordResetFinishAsync(PasswordResetFinishRequest request)
         {
-            return await _httpClient.GetFromJsonAsync<StartExternalIDPLoginResponse?>("sample-data/start-external-login-response.json");
+            if (request.Password == request.PasswordConfirm)
+            {
+                return new PasswordResetFinishResponse
+                {
+                    ErrorReason = PasswordResetErrorReason.PasswordResetErrorReason_NoError
+                };
+            }
+            return new PasswordResetFinishResponse
+            {
+                ErrorReason = PasswordResetErrorReason.PasswordResetErrorReason_InvalidPassword
+            };
+        }
+
+        public async Task<PasswordResetStartResponse?> PasswordResetStartAsync(LoginPhaseOneRequest request)
+        {
+            var response = new PasswordResetStartResponse
+            {
+                Email = request.Email,
+                Directive = "directiveEmailCodeChallenge",
+                DirectiveEmailCodeChallenge = new DirectiveEmailCodeChallenge
+                {
+                    Code = "1234"
+                }
+            };
+            return response;
+        }
+
+        public async Task<SignupResponse?> SignupRequestAsync(SignupRequest request)
+        {
+            var response = new SignupResponse
+            {
+                Email = request.Email,
+            };
+
+            if (request.Email == "ghstahl@gmail.com")
+            {
+                response.Directive = "directiveEmailCodeChallenge";
+                response.DirectiveEmailCodeChallenge = new DirectiveEmailCodeChallenge
+                {
+                    Code = "1234"
+                };
+
+            }
+            else if (request.Email.Contains("@mapped.com"))
+            {
+                response.Directive = "directiveRedirect";
+                response.DirectiveRedirect = new DirectiveRedirect
+                {
+                    RedirectURI = "https://www.google.com"
+                };
+            }
+            else
+            {
+                response.ErrorReason = SignupErrorReason.SignupErrorReason_UserAlreadyExists;
+                response.Message = "User already exists";
+            }
+           
+            return response;
+        }
+
+        public async Task<StartExternalLoginResponse?> StartExternalLoginAsync(StartExternalLoginRequest request)
+        {
+            return await _httpClient.GetFromJsonAsync<StartExternalLoginResponse?>("sample-data/start-external-login-response.json");
         
         }
 

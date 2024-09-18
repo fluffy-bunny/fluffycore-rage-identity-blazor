@@ -104,7 +104,7 @@ namespace BlazorOIDCFlow.Data
         public string Slug { get; set; }
     }
 
-    public class StartExternalIDPLoginRequest  {
+    public class StartExternalLoginRequest  {
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
         [JsonPropertyName("directive")]
@@ -113,7 +113,7 @@ namespace BlazorOIDCFlow.Data
         
     }
 
-    public class StartExternalIDPLoginResponse  {
+    public class StartExternalLoginResponse  {
         [JsonPropertyName("redirectUri")]
         public string RedirectUri { get; set; } = "";
     }
@@ -158,5 +158,79 @@ namespace BlazorOIDCFlow.Data
 
         [JsonPropertyName("directiveRedirect")]
         public DirectiveRedirect? DirectiveRedirect { get; set; } 
+    }
+    public class SignupRequest  {
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = "";
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; } = "";
+    }
+    public enum SignupErrorReason
+    {
+        SignupErrorReason_NoError = 0,
+        SignupErrorReason_InvalidPassword = 1,
+        SignupErrorReason_UserAlreadyExists = 2,
+    }
+    public class SignupResponse  {
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = "";
+
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; } = "";
+
+        [JsonPropertyName("directiveRedirect")]
+        public DirectiveRedirect? DirectiveRedirect { get; set; }
+
+        [JsonPropertyName("directiveEmailCodeChallenge")]
+        public DirectiveEmailCodeChallenge? DirectiveEmailCodeChallenge { get; set; }
+
+        [JsonPropertyName("directiveStartExternalLogin")]
+        public DirectiveStartExternalLogin? DirectiveStartExternalLogin { get; set; }
+
+        [JsonPropertyName("message")]
+        public string? Message { get; set; }
+
+        [JsonPropertyName("errorReason")]
+        public SignupErrorReason ErrorReason { get; set; } = SignupErrorReason.SignupErrorReason_NoError;
+
+    }
+
+    public class PasswordResetStartRequest  {
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = "";
+    }
+    public class PasswordResetStartResponse
+    {
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = "";
+
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; } = "";
+
+
+        [JsonPropertyName("directiveEmailCodeChallenge")]
+        public DirectiveEmailCodeChallenge? DirectiveEmailCodeChallenge { get; set; }
+
+    }
+
+    public class PasswordResetFinishRequest  {
+        [JsonPropertyName("password")]
+        public string Password { get; set; } = "";
+
+        [JsonPropertyName("passwordConfirm")]
+        public string PasswordConfirm { get; set; } = "";
+    }
+    public enum PasswordResetErrorReason
+    {
+        PasswordResetErrorReason_NoError = 0,
+        PasswordResetErrorReason_InvalidPassword = 1,
+    }
+    public class PasswordResetFinishResponse  {
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; } = "";
+
+        [JsonPropertyName("errorReason")]
+        public PasswordResetErrorReason ErrorReason { get; set; } = PasswordResetErrorReason.PasswordResetErrorReason_NoError;
     }
 }
