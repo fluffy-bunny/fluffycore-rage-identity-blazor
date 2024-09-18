@@ -11,6 +11,8 @@ namespace BlazorOIDCFlow.Data
         SignUpUserNamePassword,
         VerifyCode,
         ForgotPassword,
+        ResetPassword,
+
     }
     public enum Directive
     {
