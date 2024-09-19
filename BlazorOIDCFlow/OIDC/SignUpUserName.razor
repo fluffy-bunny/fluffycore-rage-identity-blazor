@@ -3,7 +3,7 @@
 
 <div class="card">
     <div class="card-header">
-        Sign Up
+        Create Account
     </div>
     <div class="card-body">
         <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
@@ -34,17 +34,18 @@
         <!-- Separator -->
         <hr />
         <!-- Paragraph -->
-        <p class="text-center">or sign up with a social provider</p>
+        <p class="text-center">or create an account with a social provider</p>
 
-        <div class="d-flex justify-content-around social-buttons">
+        <div class="d-flex justify-content-center social-buttons">
             @if (Model?.Manifest?.SocialIdps != null)
             {
                 @foreach (var idp in Model.Manifest.SocialIdps)
-                {
-                    <button type="button" class="btn btn-info" @onclick="() => HandleButtonClick(idp.Slug)">
-                        @idp.Name
-                    </button>
 
+                {
+                    <button type="button" class="btn btn-info d-flex align-items-center justify-content-center" 
+                    @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
+                        <img src="@idp.Slug-logo.png" alt="@idp.Name" class="social-logo me-2">@idp.Name
+                    </button>
                 }
             }
             else
@@ -64,7 +65,10 @@
     [CascadingParameter]
     public OIDCModel Model { get; set; }
 
-    private void HandleButtonClick(string slug)
+
+
+    private void HandleSocialLoginButtonClick(string slug)
+
     {
         // Handle the button click event here
         Console.WriteLine($"Button clicked: {slug}");

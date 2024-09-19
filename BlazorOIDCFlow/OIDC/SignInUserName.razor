@@ -34,21 +34,20 @@
         <!-- Paragraph -->
         <p class="text-center">or login with a social provider</p>
 
-        <div class="d-flex justify-content-around social-buttons">
-    @if (Model?.Manifest?.SocialIdps != null)
-    {
-        @foreach (var idp in Model.Manifest.SocialIdps)
-        {
-            <button type="button" class="btn btn-info" @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
-                @idp.Name
-            </button>
-
-        }
-    }
-    else
-    {
-        <p>No social IDPs available.</p>
-    }
+        <div class="d-flex justify-content-center social-buttons">
+            @if (Model?.Manifest?.SocialIdps != null)
+            {
+                @foreach (var idp in Model.Manifest.SocialIdps)
+                {
+                    <button type="button" class="btn btn-info d-flex align-items-center justify-content-center" @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
+                        <img src="@idp.Slug-logo.png" alt="@idp.Name" class="social-logo me-2">@idp.Name
+                    </button>
+                }
+            }
+            else
+            {
+                <p>No social IDPs available.</p>
+            }
         </div>
     </div>
     
