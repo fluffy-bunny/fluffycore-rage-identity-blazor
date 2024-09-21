@@ -31,5 +31,6 @@ else
     builder.Services.AddScoped<IRageApiService, LocalRageApiService>();
 }
 builder.Services.AddScoped<RedirectService>();
+builder.Services.AddBlazorBootstrap();
 
 await builder.Build().RunAsync();
