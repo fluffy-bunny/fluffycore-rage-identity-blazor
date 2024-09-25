@@ -1,4 +1,5 @@
-﻿
+﻿@using System.Net
+
 @inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 
@@ -110,7 +111,15 @@
         {
             Email = Model.Email
         };
-        var response = await RageApiService.LoginPhaseOneAsync(request);
+        var wrapper = await RageApiService.LoginPhaseOneAsync(request);
+        var response = wrapper?.Response;
+        var statusCode = wrapper?.StatusCode;
+        if (statusCode == HttpStatusCode.NotFound)
+        {
+            // show info message
+            await ShowInfoMessage.InvokeAsync("user not found");
+            return;
+        }
 
         if (response == null)
         {

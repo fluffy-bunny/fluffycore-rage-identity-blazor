@@ -41,13 +41,21 @@ async function sendRequestWithCookies(url, method, body) {
             body: JSON.stringify(body)
         });
 
+        let wrappedResponse = {
+            statusCode: response.status,
+        };
         if (response.ok) {
-            return response.json();
+            wrappedResponse.response = await response.json();
+            return wrappedResponse;
         } else {
-            throw new Error(`Request failed with status ${response.status}`);
+            return wrappedResponse;
         }
     } catch (error) {
+        let wrappedResponse = {
+            status: 500,
+            error: error
+        };
         console.error('Error    sending request: ', error);
-        throw error; // Re-throw the error for handling in the calling code
+        return wrappedResponse
     }
 }

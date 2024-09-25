@@ -86,19 +86,19 @@ namespace BlazorOIDCFlow.Services
             }
         }
 
-        public async Task<LoginPhaseOneResponse?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
+        public async Task<ResponseWrapper<LoginPhaseOneResponse?>?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
         {
             try
             {
                 var csrfToken = await GetCSRFAsync();
                
                 var url = _baseApiUrl + "/api/login-phase-one";
-                var response = await _jsRuntime.InvokeAsync<LoginPhaseOneResponse>("sendRequestWithCookies", url, "POST",  request);
+                var wrappedResponse = await _jsRuntime.InvokeAsync<ResponseWrapper<LoginPhaseOneResponse?>?>("sendRequestWithCookies", url, "POST",  request);
 
-                if (response != null)
+                if (wrappedResponse != null)
                 {
-                    Console.WriteLine(JsonSerializer.Serialize(response));
-                    return response;
+                    Console.WriteLine(JsonSerializer.Serialize(wrappedResponse));
+                    return wrappedResponse;
                 }
                 else
                 {

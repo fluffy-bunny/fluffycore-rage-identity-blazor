@@ -90,8 +90,8 @@ namespace BlazorOIDCFlow.Data
 	}
     public class ResponseWrapper<T>
     {
-        [JsonPropertyName("value")]
-        public T Value { get; set; }
+        [JsonPropertyName("response")]
+        public T Response { get; set; }
 
         [JsonPropertyName("statusCode")]
         public HttpStatusCode StatusCode { get; set; }

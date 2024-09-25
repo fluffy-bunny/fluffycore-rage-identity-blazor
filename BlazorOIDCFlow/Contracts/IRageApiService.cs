@@ -8,7 +8,7 @@ namespace BlazorOIDCFlow.Contracts
 
         public Task<LoginPasswordResponse?> LoginPasswordAsync(LoginPasswordRequest request);
 
-        public Task<LoginPhaseOneResponse?> LoginPhaseOneAsync(LoginPhaseOneRequest request);
+        public Task<ResponseWrapper<LoginPhaseOneResponse?>?> LoginPhaseOneAsync(LoginPhaseOneRequest request);
 
         public Task<PasswordResetStartResponse?> PasswordResetStartAsync(PasswordResetStartRequest request);
         public Task<PasswordResetFinishResponse?> PasswordResetFinishAsync(PasswordResetFinishRequest request);

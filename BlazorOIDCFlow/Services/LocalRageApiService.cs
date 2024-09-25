@@ -1,5 +1,6 @@
 ﻿using BlazorOIDCFlow.Contracts;
 using BlazorOIDCFlow.Data;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace BlazorOIDCFlow.Services
@@ -30,25 +31,35 @@ namespace BlazorOIDCFlow.Services
             return null;
         }
 
-        public async Task<LoginPhaseOneResponse?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
+        public async Task<ResponseWrapper<LoginPhaseOneResponse?>?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
         {
             if (request.Email == "ghstahl@gmail.com")
             {
-                return new LoginPhaseOneResponse
+                return new ResponseWrapper<LoginPhaseOneResponse?>
                 {
-                    Directive = "directiveDisplayPasswordPage",
-                    DirectiveDisplayPasswordPage = new DirectiveDisplayPasswordPage
+                    Response = new LoginPhaseOneResponse
                     {
-                        Email = request.Email,
-                        HasPasskey = false
-                    }
+                        Directive = "directiveDisplayPasswordPage",
+                        DirectiveDisplayPasswordPage = new DirectiveDisplayPasswordPage
+                        {
+                            Email = request.Email,
+                            HasPasskey = true
+                        }
+                    },
+                    StatusCode = HttpStatusCode.OK
                 };
+               
                 
             }
             if (request.Email.Contains("@mapped.com"))
             {
                 // Add your logic here
-                return await _httpClient.GetFromJsonAsync<LoginPhaseOneResponse?>("sample-data/login-phase-one-mapped-response.json");
+                var value = await _httpClient.GetFromJsonAsync<LoginPhaseOneResponse?>("sample-data/login-phase-one-mapped-response.json");
+                return new ResponseWrapper<LoginPhaseOneResponse?>
+                {
+                    Response = value,
+                    StatusCode = HttpStatusCode.OK
+                };
             }
             return null;
         }
