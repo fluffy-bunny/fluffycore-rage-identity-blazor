@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Text.Json.Serialization;
+
 
 namespace BlazorOIDCFlow.Data
 {
@@ -85,6 +88,17 @@ namespace BlazorOIDCFlow.Data
         public string Email { get; set; }
 
 	}
+    public class ResponseWrapper<T>
+    {
+        [JsonPropertyName("value")]
+        public T Value { get; set; }
+
+        [JsonPropertyName("statusCode")]
+        public HttpStatusCode StatusCode { get; set; }
+
+        [JsonPropertyName("error")]
+        public string Error { get; set; }
+    }
     public class LoginPhaseOneResponse
     {
         [JsonPropertyName("email")]

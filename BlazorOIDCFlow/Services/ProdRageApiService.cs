@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using System.Text.Json;
 using System.Text;
 using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace BlazorOIDCFlow.Services
 {
@@ -12,24 +13,47 @@ namespace BlazorOIDCFlow.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IJSRuntime _jsRuntime;
+        private readonly IConfiguration _configuration;
+        private readonly string? _baseApiUrl;
 
-        public ProdRageApiService(HttpClient httpClient, IJSRuntime jsRuntime)
+        public ProdRageApiService(IConfiguration configuration,HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
             _jsRuntime = jsRuntime;
-
+            _configuration = configuration;
+            _baseApiUrl = _configuration.GetValue<string>("BaseAPIUrl");
+            if (!string.IsNullOrEmpty(_baseApiUrl))
+            {
+                _httpClient.BaseAddress = new Uri(_baseApiUrl);
+            }
         }
         public async Task<Manifest?> GetManifestAsync()
         {
             var csrfToken = await GetCSRFAsync();
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/manifest");
-            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            request.Headers.Add("X-Csrf-Token", csrfToken);
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/manifest");
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
 
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            httpRequestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            if (csrfToken != null)
+            {
+                httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
+            }
+            try
+            {
+                var response = await _httpClient.SendAsync(httpRequestMessage);
+                response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<Manifest?>();
+                return await response.Content.ReadFromJsonAsync<Manifest?>();
+            }
+
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error: {ex.Message}");
+                return null;
+            }
+
+
 
         }
 
@@ -41,6 +65,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
 
@@ -61,26 +88,28 @@ namespace BlazorOIDCFlow.Services
 
         public async Task<LoginPhaseOneResponse?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/login-phase-one")
+            try
             {
-                Content = requestBody
-            };
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
+                var csrfToken = await GetCSRFAsync();
+               
+                var url = _baseApiUrl + "/api/login-phase-one";
+                var response = await _jsRuntime.InvokeAsync<LoginPhaseOneResponse>("sendRequestWithCookies", url, "POST",  request);
 
-            var response = await _httpClient.SendAsync(httpRequestMessage);
+                if (response != null)
+                {
+                    Console.WriteLine(JsonSerializer.Serialize(response));
+                    return response;
+                }
+                else
+                {
+                    Console.Error.WriteLine("Error: Response is null");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<LoginPhaseOneResponse>(responseData);
+                    return null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
+                Console.Error.WriteLine($"Error: {ex.Message}");
                 return null;
             }
         }
@@ -93,6 +122,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
 
@@ -119,6 +151,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
 
@@ -145,6 +180,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
 
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
@@ -172,6 +210,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
 
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
@@ -199,6 +240,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
 
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
@@ -226,6 +270,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
 
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
@@ -253,6 +300,9 @@ namespace BlazorOIDCFlow.Services
             {
                 Content = requestBody
             };
+            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
+            httpRequestMessage.Headers.Add("Cookie", allCookies);
+
 
             httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);

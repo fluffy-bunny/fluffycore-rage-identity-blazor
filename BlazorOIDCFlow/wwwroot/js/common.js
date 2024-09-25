@@ -22,3 +22,32 @@ function getCSRF() {
     let csrf = getCookieValue('_csrf');
     return csrf;
 }
+
+function getAllCookies() {
+    return document.cookie;
+}
+
+async function sendRequestWithCookies(url, method, body) {
+    try {
+        const csrfToken = getCSRF();
+
+        const response = await fetch(url, {
+            method: method,
+            credentials: 'include', // This ensures cookies are included
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Csrf-Token': csrfToken
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error    sending request: ', error);
+        throw error; // Re-throw the error for handling in the calling code
+    }
+}

@@ -1,13 +1,20 @@
 using BlazorOIDCFlow;
 using BlazorOIDCFlow.Contracts;
 using BlazorOIDCFlow.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 using System.Text;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
+// Add localization services
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 
 var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
@@ -33,4 +40,16 @@ else
 builder.Services.AddScoped<RedirectService>();
 builder.Services.AddBlazorBootstrap();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+// Set the culture
+var supportedCultures = new[] { new CultureInfo("en") };
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en");
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
+await host.RunAsync();

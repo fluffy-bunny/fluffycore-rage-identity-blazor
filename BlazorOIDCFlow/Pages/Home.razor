@@ -3,6 +3,7 @@
 @using BlazorOIDCFlow.Contracts
 @inject HttpClient Http
 @inject IRageApiService RageApiService
+@inject IStringLocalizer<App> Localizer
 
 <CascadingValue Value="Model">
     <OIDCContainer />
@@ -16,5 +17,11 @@
         var manifest = await RageApiService.GetManifestAsync();
         Model.Manifest = manifest;
 
+        foreach (var socialIdp in Model.Manifest.SocialIdps)
+        {
+            var socialName = Localizer[socialIdp.Slug];
+            socialIdp.Name = socialName;
+        }
+       
     }
 }

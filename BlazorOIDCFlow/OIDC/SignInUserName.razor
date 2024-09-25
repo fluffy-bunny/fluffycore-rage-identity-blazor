@@ -111,6 +111,7 @@
             Email = Model.Email
         };
         var response = await RageApiService.LoginPhaseOneAsync(request);
+
         if (response == null)
         {
             // show info message

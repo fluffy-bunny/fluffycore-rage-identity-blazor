@@ -7,10 +7,13 @@ namespace BlazorOIDCFlow.Services
     public class LocalRageApiService : IRageApiService
     {
         private readonly HttpClient _httpClient;
-
-        public LocalRageApiService(HttpClient httpClient)
+        private readonly IConfiguration _configuration;
+        private readonly string? _baseApiUrl;
+        public LocalRageApiService(IConfiguration configuration, HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _configuration = configuration;
+            _baseApiUrl = _configuration.GetValue<string>("BaseAPIUrl");
         }
         public async Task<Manifest?> GetManifestAsync()
         {
