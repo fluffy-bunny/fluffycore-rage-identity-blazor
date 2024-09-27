@@ -1,11 +1,7 @@
 ﻿using BlazorOIDCFlow.Contracts;
 using BlazorOIDCFlow.Data;
-using System.Net.Http.Json;
 using Microsoft.JSInterop;
 using System.Text.Json;
-using System.Text;
-using System.Net.Http.Headers;
-using System.Net.Http;
 
 namespace BlazorOIDCFlow.Services
 {
@@ -16,7 +12,7 @@ namespace BlazorOIDCFlow.Services
         private readonly IConfiguration _configuration;
         private readonly string? _baseApiUrl;
 
-        public ProdRageApiService(IConfiguration configuration,HttpClient httpClient, IJSRuntime jsRuntime)
+        public ProdRageApiService(IConfiguration configuration, HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
             _jsRuntime = jsRuntime;
@@ -27,73 +23,12 @@ namespace BlazorOIDCFlow.Services
                 _httpClient.BaseAddress = new Uri(_baseApiUrl);
             }
         }
-        public async Task<Manifest?> GetManifestAsync()
-        {
-            var csrfToken = await GetCSRFAsync();
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/manifest");
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-            httpRequestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            if (csrfToken != null)
-            {
-                httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-            }
-            try
-            {
-                var response = await _httpClient.SendAsync(httpRequestMessage);
-                response.EnsureSuccessStatusCode();
-
-                return await response.Content.ReadFromJsonAsync<Manifest?>();
-            }
-
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"Error: {ex.Message}");
-                return null;
-            }
-
-
-
-        }
-
-        public async Task<LoginPasswordResponse?> LoginPasswordAsync(LoginPasswordRequest request)
-        {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/login-password")
-            {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<LoginPasswordResponse>(responseData);
-            }
-            else
-            {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
-                return null;
-            }
-        }
-
-        public async Task<ResponseWrapper<LoginPhaseOneResponse?>?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
+        public async Task<ResponseWrapper<Manifest?>?> GetManifestAsync()
         {
             try
             {
-                var csrfToken = await GetCSRFAsync();
-               
-                var url = _baseApiUrl + "/api/login-phase-one";
-                var wrappedResponse = await _jsRuntime.InvokeAsync<ResponseWrapper<LoginPhaseOneResponse?>?>("sendRequestWithCookies", url, "POST",  request);
+                var url = _baseApiUrl + "/api/manifest";
+                var wrappedResponse = await _jsRuntime.InvokeAsync<ResponseWrapper<Manifest?>?>("sendRequestWithCookies", url, "GET", null);
 
                 if (wrappedResponse != null)
                 {
@@ -114,212 +49,67 @@ namespace BlazorOIDCFlow.Services
             }
         }
 
-        public async Task<PasswordResetFinishResponse?> PasswordResetFinishAsync(PasswordResetFinishRequest request)
+        public async Task<ResponseWrapper<TResponse?>?> PostAsync<TRequest, TResponse>(string path, TRequest request) where TRequest : class where TResponse : class
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/password-reset-finish")
+            try
             {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
+                var url = _baseApiUrl + path;
+                var wrappedResponse = await _jsRuntime.InvokeAsync<ResponseWrapper<TResponse?>?>("sendRequestWithCookies", url, "POST", request);
 
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
+                if (wrappedResponse != null)
+                {
+                    Console.WriteLine(JsonSerializer.Serialize(wrappedResponse));
+                    return wrappedResponse;
+                }
+                else
+                {
+                    Console.Error.WriteLine("Error: Response is null");
 
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<PasswordResetFinishResponse>(responseData);
+                    return null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
+                Console.Error.WriteLine($"Error: {ex.Message}");
                 return null;
             }
         }
-
-        public async Task<PasswordResetStartResponse?> PasswordResetStartAsync(PasswordResetStartRequest request)
+        public async Task<ResponseWrapper<LoginPasswordResponse?>?> LoginPasswordAsync(LoginPasswordRequest request)
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/password-reset-start")
-            {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<PasswordResetStartResponse>(responseData);
-            }
-            else
-            {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
-                return null;
-            }
+            return await PostAsync<LoginPasswordRequest, LoginPasswordResponse>("/api/login-password", request);
         }
 
-        public async Task<SignupResponse?> SignupRequestAsync(SignupRequest request)
+        public async Task<ResponseWrapper<LoginPhaseOneResponse?>?> LoginPhaseOneAsync(LoginPhaseOneRequest request)
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/signup")
-            {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<SignupResponse>(responseData);
-            }
-            else
-            {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
-                return null;
-            }
+            return await PostAsync<LoginPhaseOneRequest, LoginPhaseOneResponse>("/api/login-phase-one", request);
         }
-
-        public async Task<StartExternalLoginResponse?> StartExternalLoginAsync(StartExternalLoginRequest request)
+        public async Task<ResponseWrapper<PasswordResetFinishResponse?>?> PasswordResetFinishAsync(PasswordResetFinishRequest request)
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/start-external-login")
-            {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<StartExternalLoginResponse>(responseData);
-            }
-            else
-            {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
-                return null;
-            }
+            return await PostAsync<PasswordResetFinishRequest, PasswordResetFinishResponse>("/api/password-reset-finish", request);
         }
-
-        public async Task<VerifyCodeResponse?> VerifyCodeAsync(VerifyCodeRequest request)
+        public async Task<ResponseWrapper<PasswordResetStartResponse?>?> PasswordResetStartAsync(PasswordResetStartRequest request)
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/verify-code")
-            {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<VerifyCodeResponse>(responseData);
-            }
-            else
-            {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
-                return null;
-            }
+            return await PostAsync<PasswordResetStartRequest, PasswordResetStartResponse>("/api/password-reset-start", request);
         }
-
-        public async Task<VerifyPasswordStringResponse?> VerifyPasswordStrengthAsync(VerifyPasswordStrengthRequest request)
+        public async Task<ResponseWrapper<SignupResponse?>?> SignupRequestAsync(SignupRequest request)
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/verify-password-strength")
-            {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<VerifyPasswordStringResponse>(responseData);
-            }
-            else
-            {
-                Console.Error.WriteLine($"Error: {response.ReasonPhrase}");
-                return null;
-            }
+            return await PostAsync<SignupRequest, SignupResponse>("/api/signup", request);
         }
-
-        public async Task<VerifyUsernameResponse?> VerifyUsernameAsync(VerifyUsernameRequest request)
+        public async Task<ResponseWrapper<StartExternalLoginResponse?>?> StartExternalLoginAsync(StartExternalLoginRequest request)
         {
-            var csrfToken = await GetCSRFAsync();
-            var requestBody = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/verify-username")
-            {
-                Content = requestBody
-            };
-            var allCookies = await _jsRuntime.InvokeAsync<string>("getAllCookies");
-            httpRequestMessage.Headers.Add("Cookie", allCookies);
-
-
-            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequestMessage.Headers.Add("X-Csrf-Token", csrfToken);
-
-            var response = await _httpClient.SendAsync(httpRequestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseData);
-                return JsonSerializer.Deserialize<VerifyUsernameResponse>(responseData);
-            }
-            else
-            {
-                Console.Error.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
+            return await PostAsync<StartExternalLoginRequest, StartExternalLoginResponse>("/api/start-external-login", request);
+        }
+        public async Task<ResponseWrapper<VerifyCodeResponse?>?> VerifyCodeAsync(VerifyCodeRequest request)
+        {
+            return await PostAsync<VerifyCodeRequest, VerifyCodeResponse>("/api/verify-code", request);
+        }
+        public async Task<ResponseWrapper<VerifyPasswordStringResponse?>?> VerifyPasswordStrengthAsync(VerifyPasswordStrengthRequest request)
+        {
+            return await PostAsync<VerifyPasswordStrengthRequest, VerifyPasswordStringResponse>("/api/verify-password-strength", request);
+        }
+        public async Task<ResponseWrapper<VerifyUsernameResponse?>?> VerifyUsernameAsync(VerifyUsernameRequest request)
+        {
+            return await PostAsync<VerifyUsernameRequest, VerifyUsernameResponse>("/api/verify-username", request);
         }
 
         private async Task<string> GetCSRFAsync()

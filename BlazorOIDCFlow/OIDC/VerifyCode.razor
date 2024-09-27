@@ -1,5 +1,6 @@
 ﻿@inject IRageApiService RageApiService
 @inject RedirectService RedirectService
+@inject IJSRuntime JS
 
 <div class="card">
     <div class="card-header">
@@ -10,7 +11,7 @@
          <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
             <div class="form-group mb-3">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="code" required @bind-value="verifyCodeModel.Code">
+                    <input placeholder="Enter Code" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="verifyCodeModel.Code">
                     <label for="code">Enter Code</label>
                 </div>
             </div>
@@ -30,6 +31,8 @@
 </div>
 
 @code {
+    private ElementReference inputCodeElement;
+
     public class VerifyCodeModel
     {
         [Required]
@@ -66,7 +69,13 @@
         {
            Code = Model.Code
         };
-        var response = await RageApiService.VerifyCodeAsync(request);
+        var wrapper = await RageApiService.VerifyCodeAsync(request);
+        if (wrapper == null){
+            // show info message
+            await ShowInfoMessage.InvokeAsync("Invalid code");
+            return;
+        }
+        var response = wrapper.Response;
         if (response == null)
         {
             // show info message
@@ -85,5 +94,13 @@
         }
         // Call SetStep with the desired step value
         await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("setFocus", inputCodeElement);
+        }
     }
 }

@@ -31,31 +31,39 @@ async function sendRequestWithCookies(url, method, body) {
     try {
         const csrfToken = getCSRF();
 
-        const response = await fetch(url, {
+        const requestOptions = {
             method: method,
-            credentials: 'include', // This ensures cookies are included
+            credentials: 'include', // Ensures cookies are included
             headers: {
                 'Content-Type': 'application/json',
                 'X-Csrf-Token': csrfToken
-            },
-            body: JSON.stringify(body)
-        });
+            }
+        };
+
+        if (body) {
+            requestOptions.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, requestOptions);
 
         let wrappedResponse = {
-            statusCode: response.status,
+            statusCode: response.status
         };
-        if (response.ok) {
-            wrappedResponse.response = await response.json();
-            return wrappedResponse;
-        } else {
-            return wrappedResponse;
-        }
+        wrappedResponse.response = await response.json();
+
+
+        return wrappedResponse;
     } catch (error) {
         let wrappedResponse = {
             status: 500,
             error: error
         };
-        console.error('Error    sending request: ', error);
-        return wrappedResponse
+
+        console.error('Error sending request: ', error);
+        return wrappedResponse;
     }
 }
+window.setFocus = (element) => {
+    element.focus();
+};
+

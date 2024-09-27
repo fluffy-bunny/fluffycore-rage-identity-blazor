@@ -2,6 +2,7 @@
 
 @inject IRageApiService RageApiService
 @inject RedirectService RedirectService
+@inject IJSRuntime JS
 
 <div class="card">
     <div class="card-header">
@@ -12,10 +13,9 @@
 
              <div class="form-group mb-3">
                 <div class="form-floating">
-                    <input type="email" class="form-control" id="email" required @bind-value="emailModel.Email">
-                    <label for="email">Email address</label>
+                    <input placeholder="Email Address" @ref="inputEmailElement" type="email" class="form-control" id="email" required @bind-value="emailModel.Email">
+                    <label for="email">Email Address</label>
                 </div>
-                
             </div>
             <!-- Wizard Buttons -->
 
@@ -55,6 +55,7 @@
 </div>
 
 @code {
+    private ElementReference inputEmailElement;
 
     public class EmailModel
     {
@@ -66,6 +67,7 @@
     protected override void OnInitialized()
     {
         emailModel.Email = Model.Email;
+        Model.Directive = Directive.Directive_Login;
     }
     [Parameter]
     public EventCallback<OIDCPage> SetStep { get; set; }
@@ -86,7 +88,15 @@
             Slug = slug,
             Directive = "login"
         };
-        var response = await RageApiService.StartExternalLoginAsync(request);
+        var wrapper = await RageApiService.StartExternalLoginAsync(request);
+        if (wrapper == null)
+        {
+            // show info message
+            await ShowInfoMessage.InvokeAsync("error with external login");
+            return;
+        }
+        var response = wrapper?.Response;
+
         if (response != null)
         {
             Console.WriteLine($"Response: {response}");
@@ -135,12 +145,22 @@
         }
         if (response.DirectiveStartExternalLogin != null)
         {
-            var startExternalLoginResponse = await RageApiService.StartExternalLoginAsync(new StartExternalLoginRequest
+            var wrapper2 = await RageApiService.StartExternalLoginAsync(new StartExternalLoginRequest
             {
                Directive = "login",
                Slug = response.DirectiveStartExternalLogin.Slug
 
             });
+
+            if (wrapper2 == null)
+
+            {
+                // show info message
+                await ShowInfoMessage.InvokeAsync("error with external login");
+                return;
+            }
+            var startExternalLoginResponse = wrapper2.Response;
+
             if (startExternalLoginResponse != null)
             {
                 RedirectService.RedirectToUrl(startExternalLoginResponse.RedirectUri);
@@ -151,5 +171,13 @@
         }
         // Call SetStep with the desired step value
         await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("setFocus", inputEmailElement);
+        }
     }
 }

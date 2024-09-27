@@ -16,17 +16,27 @@ namespace BlazorOIDCFlow.Services
             _configuration = configuration;
             _baseApiUrl = _configuration.GetValue<string>("BaseAPIUrl");
         }
-        public async Task<Manifest?> GetManifestAsync()
+        public async Task<ResponseWrapper<Manifest?>?> GetManifestAsync()
         {
-            return await _httpClient.GetFromJsonAsync<Manifest?>("sample-data/manifest.json");
+            var respone = await _httpClient.GetFromJsonAsync<Manifest?>("sample-data/manifest.json");
+            return new ResponseWrapper<Manifest?>
+            {
+                Response = respone,
+                StatusCode = HttpStatusCode.OK
+            };
         }
 
-        public async Task<LoginPasswordResponse?> LoginPasswordAsync(LoginPasswordRequest request)
+        public async Task<ResponseWrapper<LoginPasswordResponse?>?> LoginPasswordAsync(LoginPasswordRequest request)
         {
             if (request.Email == "ghstahl@gmail.com")
             {
                 // Add your logic here
-                return await _httpClient.GetFromJsonAsync<LoginPasswordResponse?>("sample-data/login-password-response.json");
+                var response = await _httpClient.GetFromJsonAsync<LoginPasswordResponse?>("sample-data/login-password-response.json");
+                return new ResponseWrapper<LoginPasswordResponse?>
+                {
+                    Response = response,
+                    StatusCode = HttpStatusCode.OK
+                };
             }
             return null;
         }
@@ -48,8 +58,8 @@ namespace BlazorOIDCFlow.Services
                     },
                     StatusCode = HttpStatusCode.OK
                 };
-               
-                
+
+
             }
             if (request.Email.Contains("@mapped.com"))
             {
@@ -64,22 +74,31 @@ namespace BlazorOIDCFlow.Services
             return null;
         }
 
-        public async Task<PasswordResetFinishResponse?> PasswordResetFinishAsync(PasswordResetFinishRequest request)
+        public async Task<ResponseWrapper<PasswordResetFinishResponse?>?> PasswordResetFinishAsync(PasswordResetFinishRequest request)
         {
             if (request.Password == request.PasswordConfirm)
             {
-                return new PasswordResetFinishResponse
+                return new ResponseWrapper<PasswordResetFinishResponse?>
                 {
-                    ErrorReason = PasswordResetErrorReason.PasswordResetErrorReason_NoError
+                    Response = new PasswordResetFinishResponse
+                    {
+                        ErrorReason = PasswordResetErrorReason.PasswordResetErrorReason_NoError
+                    },
+                    StatusCode = HttpStatusCode.OK
                 };
             }
-            return new PasswordResetFinishResponse
+            return new ResponseWrapper<PasswordResetFinishResponse?>
             {
-                ErrorReason = PasswordResetErrorReason.PasswordResetErrorReason_InvalidPassword
+                Response = new PasswordResetFinishResponse
+                {
+                    ErrorReason = PasswordResetErrorReason.PasswordResetErrorReason_InvalidPassword
+                },
+                StatusCode = HttpStatusCode.BadRequest
             };
+
         }
 
-        public async Task<PasswordResetStartResponse?> PasswordResetStartAsync(PasswordResetStartRequest request)
+        public async Task<ResponseWrapper<PasswordResetStartResponse?>?> PasswordResetStartAsync(PasswordResetStartRequest request)
         {
             var response = new PasswordResetStartResponse
             {
@@ -90,10 +109,14 @@ namespace BlazorOIDCFlow.Services
                     Code = "1234"
                 }
             };
-            return response;
+            return new ResponseWrapper<PasswordResetStartResponse?>
+            {
+                Response = response,
+                StatusCode = HttpStatusCode.OK
+            };
         }
 
-        public async Task<SignupResponse?> SignupRequestAsync(SignupRequest request)
+        public async Task<ResponseWrapper<SignupResponse?>?> SignupRequestAsync(SignupRequest request)
         {
             var response = new SignupResponse
             {
@@ -122,37 +145,59 @@ namespace BlazorOIDCFlow.Services
                 response.ErrorReason = SignupErrorReason.SignupErrorReason_UserAlreadyExists;
                 response.Message = "User already exists";
             }
-           
-            return response;
+
+            return new ResponseWrapper<SignupResponse?>
+            {
+                Response = response,
+                StatusCode = HttpStatusCode.OK
+            };
         }
 
-        public async Task<StartExternalLoginResponse?> StartExternalLoginAsync(StartExternalLoginRequest request)
+        public async Task<ResponseWrapper<StartExternalLoginResponse?>?> StartExternalLoginAsync(StartExternalLoginRequest request)
         {
-            return await _httpClient.GetFromJsonAsync<StartExternalLoginResponse?>("sample-data/start-external-login-response.json");
-        
+            var response = await _httpClient.GetFromJsonAsync<StartExternalLoginResponse?>("sample-data/start-external-login-response.json");
+            return new ResponseWrapper<StartExternalLoginResponse?>
+            {
+                Response = response,
+                StatusCode = HttpStatusCode.OK
+            };
         }
 
-        public async Task<VerifyCodeResponse?> VerifyCodeAsync(VerifyCodeRequest request)
+        public async Task<ResponseWrapper<VerifyCodeResponse?>?> VerifyCodeAsync(VerifyCodeRequest request)
         {
             if (request.Code == "1234")
             {
-                return await _httpClient.GetFromJsonAsync<VerifyCodeResponse?>("sample-data/verify-code-response.json");
-
+                var response = await _httpClient.GetFromJsonAsync<VerifyCodeResponse?>("sample-data/verify-code-response.json");
+                return new ResponseWrapper<VerifyCodeResponse?>
+                {
+                    Response = response,
+                    StatusCode = HttpStatusCode.OK
+                };
             }
             return null;
         }
 
-        public async Task<VerifyPasswordStringResponse?> VerifyPasswordStrengthAsync(VerifyPasswordStrengthRequest request)
+        public async Task<ResponseWrapper<VerifyPasswordStringResponse?>?> VerifyPasswordStrengthAsync(VerifyPasswordStrengthRequest request)
         {
-            return await _httpClient.GetFromJsonAsync<VerifyPasswordStringResponse?>("sample-data/verify-password-strength-response.json");
+            var response = await _httpClient.GetFromJsonAsync<VerifyPasswordStringResponse?>("sample-data/verify-password-strength-response.json");
+            return new ResponseWrapper<VerifyPasswordStringResponse?>
+            {
+                Response = response,
+                StatusCode = HttpStatusCode.OK
+            };
         }
 
-        public async Task<VerifyUsernameResponse?> VerifyUsernameAsync(VerifyUsernameRequest request)
+        public async Task<ResponseWrapper<VerifyUsernameResponse?>?> VerifyUsernameAsync(VerifyUsernameRequest request)
         {
             if (request.UserName == "ghstahl@gmail.com")
             {
                 // Add your logic here
-                return await _httpClient.GetFromJsonAsync<VerifyUsernameResponse?>("sample-data/verify-username-response.json");
+                var response = await _httpClient.GetFromJsonAsync<VerifyUsernameResponse?>("sample-data/verify-username-response.json");
+                return new ResponseWrapper<VerifyUsernameResponse?>
+                {
+                    Response = response,
+                    StatusCode = HttpStatusCode.OK
+                };
 
             }
             // return 404
