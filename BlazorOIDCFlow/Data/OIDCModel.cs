@@ -25,6 +25,7 @@ namespace BlazorOIDCFlow.Data
     }
     public class OIDCModel
     {
+        public bool DevelopmentMode { get; set; }
 
         public string? Email { get; set; }
 
@@ -36,6 +37,8 @@ namespace BlazorOIDCFlow.Data
         public string Code { get; set; } = "";
 
         public Directive Directive { get; set; } = Directive.Directive_Unspecified;
+
+        public OIDCPage InitialPage { get; set; } = OIDCPage.SigninUserName;
     }
     public class Manifest
     {
@@ -44,8 +47,19 @@ namespace BlazorOIDCFlow.Data
         public List<SocialIdp> SocialIdps { get; set; } = new List<SocialIdp>();
         [JsonPropertyName("passkey_enabled")]
         public bool PasskeyEnabled { get; set; } = false;
-    }
 
+        [JsonPropertyName("development_mode")]
+        public bool DevelopmentMode { get; set; } = false;
+
+        [JsonPropertyName("landing_page")]
+        public LandingPage? LandingPage { get; set; }
+    }
+    public class LandingPage
+    {
+        [JsonPropertyName("page")]
+        public string Page { get; set; } = "";
+    }
+     
     public class SocialIdp
     {
         [JsonPropertyName("slug")]
@@ -182,7 +196,19 @@ namespace BlazorOIDCFlow.Data
         public string Code { get; set; } = "";
         
     }
+    public class VerifyCodeBeginResponse
+    {
+        [JsonPropertyName("code")]
+        public string Code { get; set; } = "";
 
+        [JsonPropertyName("valid")]
+        public bool Valid { get; set; }  
+
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = "";
+
+    }
+ 
     public class VerifyCodeResponse  {
         [JsonPropertyName("directive")]
         public string Directive { get; set; } = "";

@@ -5,6 +5,10 @@ namespace BlazorOIDCFlow.Contracts
     public interface IRageApiService
     {
         public Task<ResponseWrapper<Manifest?>?> GetManifestAsync();
+        public Task<ResponseWrapper<Manifest?>?> StartOverAsync();
+
+        public Task<ResponseWrapper<VerifyCodeBeginResponse?>?> GetVerifyCodeBeginAsync();
+
         public Task<ResponseWrapper<LoginPhaseOneResponse?>?> LoginPhaseOneAsync(LoginPhaseOneRequest request);
 
         public Task<ResponseWrapper<LoginPasswordResponse?>?> LoginPasswordAsync(LoginPasswordRequest request);

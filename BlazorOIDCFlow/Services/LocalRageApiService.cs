@@ -26,6 +26,20 @@ namespace BlazorOIDCFlow.Services
             };
         }
 
+        public async Task<ResponseWrapper<VerifyCodeBeginResponse?>?> GetVerifyCodeBeginAsync()
+        {
+            return new ResponseWrapper<VerifyCodeBeginResponse?>
+            {
+                Response = new VerifyCodeBeginResponse
+                {
+                    Valid = true,
+                    Email = "test@test.com",
+                    Code = "1234"
+                },
+                StatusCode = HttpStatusCode.OK
+            };
+        }
+
         public async Task<ResponseWrapper<LoginPasswordResponse?>?> LoginPasswordAsync(LoginPasswordRequest request)
         {
             if (request.Email == "ghstahl@gmail.com")
@@ -161,6 +175,11 @@ namespace BlazorOIDCFlow.Services
                 Response = response,
                 StatusCode = HttpStatusCode.OK
             };
+        }
+
+        public async Task<ResponseWrapper<Manifest?>?> StartOverAsync()
+        {
+            return await GetManifestAsync();
         }
 
         public async Task<ResponseWrapper<VerifyCodeResponse?>?> VerifyCodeAsync(VerifyCodeRequest request)

@@ -7,7 +7,7 @@
         Verify Code
     </div>
     <div class="card-body">
-        <p>A verification code has be emailed to @Model.Email If an account exists.</p>
+        <p>A verification code has be emailed to @verifyCodeModel.Email If an account exists.</p>
          <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
             <div class="form-group mb-3">
                 <div class="form-floating">
@@ -37,13 +37,27 @@
     {
         [Required]
         public string Code { get; set; }
+
+        public string Email { get; set; }
     }
     private VerifyCodeModel verifyCodeModel = new VerifyCodeModel();
 
-    protected override void OnInitialized()
+    
+
+    protected override async Task OnInitializedAsync()
     {
-        verifyCodeModel.Code = Model.Code;
+        var wrappedResponse = await RageApiService.GetVerifyCodeBeginAsync();
+        var verifyCodeBeginResponse = wrappedResponse?.Response;
+        if (verifyCodeBeginResponse == null)
+        {
+            // show info message
+            await ShowInfoMessage.InvokeAsync("Invalid verification code state");
+            return;
+        }
+        verifyCodeModel.Code = verifyCodeBeginResponse.Code;
+        verifyCodeModel.Email = verifyCodeBeginResponse.Email;
     }
+
 
     [Parameter]
     public EventCallback<OIDCPage> SetStep { get; set; }
@@ -62,12 +76,12 @@
     }
     private async void HandleValidSubmit()
     {
-        Model.Code = verifyCodeModel.Code;
+        
         // Handle the next button click event here
         Console.WriteLine("Next button clicked");
         var request = new VerifyCodeRequest
         {
-           Code = Model.Code
+                Code = verifyCodeModel.Code
         };
         var wrapper = await RageApiService.VerifyCodeAsync(request);
         if (wrapper == null){

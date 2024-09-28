@@ -1,40 +1,50 @@
-﻿<div class="container center-card">
-    <div class="card fixed-width-card">
+﻿@inject IRageApiService RageApiService
+@inject IStringLocalizer<App> Localizer
 
-    @{
-        switch (OIDCPage)
-        {
-            case OIDCPage.SigninUserName:
-                <SignInUserName SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
-                break;
-            case OIDCPage.SignUpUserName:
-                <SignUpUserName SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
-                break;
-            case OIDCPage.SigninUserNamePassword:
-                <SignInUserNamePassword SetStep="SetStep" />
-                break;
-            case OIDCPage.VerifyCode:
-                <VerifyCode SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
-                break;
-            case OIDCPage.ForgotPassword:
-                <ForgotPassword SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
-                break;
-            case OIDCPage.ResetPassword:
-                <ResetPassword SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
-                break;
-        }
-    }
+@if (!isInitialized)
+{
+    <p>@Localizer["Loading"]</p>
+    
+}
+else
+{
+    <div class="container center-card">
+        <div class="card fixed-width-card">
 
-    <div class="modal" style="display:@(showInfoMessage ? "block" : "none")">
-        <div class="modal-content">
-            <span class="close" @onclick="CloseInfoMessage">&times;</span>
-            <p>@infoMessage</p>
+            @{
+                switch (OIDCPage)
+                {
+                    case OIDCPage.SigninUserName:
+                        <SignInUserName SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                        break;
+                    case OIDCPage.SignUpUserName:
+                        <SignUpUserName SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                        break;
+                    case OIDCPage.SigninUserNamePassword:
+                        <SignInUserNamePassword SetStep="SetStep" />
+                        break;
+                    case OIDCPage.VerifyCode:
+                        <VerifyCode SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                        break;
+                    case OIDCPage.ForgotPassword:
+                        <ForgotPassword SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                        break;
+                    case OIDCPage.ResetPassword:
+                        <ResetPassword SetStep="SetStep" ShowInfoMessage="ShowInfoMessage" />
+                        break;
+                }
+            }
+
+            <div class="modal" style="display:@(showInfoMessage ? "block" : "none")">
+                <div class="modal-content">
+                    <span class="close" @onclick="CloseInfoMessage">×</span>
+                    <p>@infoMessage</p>
+                </div>
+            </div>
+
         </div>
     </div>
-   
-
-    </div>
-</div>
+}
 
 @code {
     [CascadingParameter]
@@ -43,6 +53,33 @@
     public OIDCPage OIDCPage { get; set; } = OIDCPage.SigninUserName;
     private bool showInfoMessage = false;
     private string infoMessage = string.Empty;
+    private bool isInitialized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var wrappedResponse = await RageApiService.GetManifestAsync();
+        var manifest = wrappedResponse?.Response;
+        Model.Manifest = manifest;
+
+        foreach (var socialIdp in Model.Manifest.SocialIdps)
+        {
+            var socialName = Localizer[socialIdp.Slug];
+            socialIdp.Name = socialName;
+        }
+        if (manifest?.LandingPage != null)
+        {
+            switch (manifest.LandingPage.Page)
+            {
+                case "VerifyCode":
+                    SetStep(OIDCPage.VerifyCode);
+                    break;
+            }
+        }
+        await RageApiService.StartOverAsync();
+        isInitialized = true;
+
+     }
+
     private void SetStep(OIDCPage oidcPage)
     {
         OIDCPage = oidcPage;

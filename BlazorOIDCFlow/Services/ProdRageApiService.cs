@@ -23,12 +23,13 @@ namespace BlazorOIDCFlow.Services
                 _httpClient.BaseAddress = new Uri(_baseApiUrl);
             }
         }
-        public async Task<ResponseWrapper<Manifest?>?> GetManifestAsync()
+        
+        public async Task<ResponseWrapper<TResponse?>?> GetAsync<TResponse>(string path)   where TResponse : class
         {
             try
             {
-                var url = _baseApiUrl + "/api/manifest";
-                var wrappedResponse = await _jsRuntime.InvokeAsync<ResponseWrapper<Manifest?>?>("sendRequestWithCookies", url, "GET", null);
+                var url = _baseApiUrl + path;
+                var wrappedResponse = await _jsRuntime.InvokeAsync<ResponseWrapper<TResponse?>?>("sendRequestWithCookies", url, "GET", null);
 
                 if (wrappedResponse != null)
                 {
@@ -48,7 +49,6 @@ namespace BlazorOIDCFlow.Services
                 return null;
             }
         }
-
         public async Task<ResponseWrapper<TResponse?>?> PostAsync<TRequest, TResponse>(string path, TRequest request) where TRequest : class where TResponse : class
         {
             try
@@ -73,6 +73,10 @@ namespace BlazorOIDCFlow.Services
                 Console.Error.WriteLine($"Error: {ex.Message}");
                 return null;
             }
+        }
+        public async Task<ResponseWrapper<Manifest?>?> GetManifestAsync()
+        {
+            return await GetAsync<Manifest>("/api/manifest");
         }
         public async Task<ResponseWrapper<LoginPasswordResponse?>?> LoginPasswordAsync(LoginPasswordRequest request)
         {
@@ -115,6 +119,16 @@ namespace BlazorOIDCFlow.Services
         private async Task<string> GetCSRFAsync()
         {
             return await _jsRuntime.InvokeAsync<string>("getCSRF");
+        }
+
+        public async Task<ResponseWrapper<VerifyCodeBeginResponse?>?> GetVerifyCodeBeginAsync()
+        {
+            return await GetAsync<VerifyCodeBeginResponse>("/api/verify-code-begin");
+        }
+
+        public async Task<ResponseWrapper<Manifest?>?> StartOverAsync()
+        {
+            return await GetAsync<Manifest>("/api/start-over");
         }
     }
 }
