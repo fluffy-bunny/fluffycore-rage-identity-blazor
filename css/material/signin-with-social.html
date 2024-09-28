@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Design Form Floating Example in Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@material/web/all.js';
+      import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+  
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-content">
+                <h1 class="md-typescale-display-medium">Sign In</h1>
+                <form>
+                    <md-outlined-text-field label="Email address" type="email" id="email"></md-outlined-text-field>
+                    <md-outlined-text-field label="Password" type="password" id="password"></md-outlined-text-field>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <a href="#" class="md-typescale-body-medium">Forgot Password?</a>
+                        <div>
+                            <md-filled-button type="button">Back</md-filled-button>
+                            <md-filled-button type="submit">Next</md-filled-button>
+                        </div>
+                    </div>
+                    <hr style="width: 100%; margin: 20px 0;">
+                    <div class="social-buttons">
+                        <md-filled-button type="button" style="font-size: 0.75em; padding: 4px 8px;">Login with Google</md-filled-button>
+                        <md-filled-button type="button" style="font-size: 0.75em; padding: 4px 8px;">Login with Facebook</md-filled-button>
+                        <md-filled-button type="button" style="font-size: 0.75em; padding: 4px 8px;">Login with Twitter</md-filled-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <style>
+ .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .card {
+        width: 600px;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+      }
+      .card-content {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      md-outlined-text-field {
+        --md-outlined-text-field-font-size: 0.75em;
+        --md-outlined-text-field-padding: 4px 8px;
+      }
+      .social-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+      }
+    </style>
+</body>
+</html>
