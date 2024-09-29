@@ -80,9 +80,9 @@ namespace BlazorOIDCFlow.Data
 
         public string UserName { get; set; }
 
-        [JsonPropertyName("passkeyAvailable")]
+        [JsonPropertyName("passkeyAvailabel")]
 
-        public bool PasskeyAvailable { get; set; }
+        public bool PasskeyAvailabel { get; set; }
     }
     public class VerifyPasswordStrengthRequest
     {

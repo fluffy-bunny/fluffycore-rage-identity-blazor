@@ -1,18 +1,19 @@
 ﻿@inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 @inject IJSRuntime JS
+@inject IStringLocalizer<App> Localizer
 
 <div>
     <div class="card-header">
-        Verify Code
+        @Localizer["label_verify_code"]
     </div>
     <div class="card-body">
-        <p>A verification code has be emailed to @verifyCodeModel.Email If an account exists.</p>
-         <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
+        <p>@string.Format(Localizer["message_verify_code"], verifyCodeModel.Email)</p>
+        <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
             <div class="form-group mb-3">
                 <div class="form-floating">
-                    <input placeholder="Enter Code" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="verifyCodeModel.Code">
-                    <label for="code">Enter Code</label>
+                    <input placeholder="@Localizer["label_enter_code"]" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="verifyCodeModel.Code">
+                    <label for="code">@Localizer["label_enter_code"]</label>
                 </div>
             </div>
             
@@ -20,9 +21,9 @@
             <div class="d-flex justify-content-end mb-3 wizard-buttons">
                 <div>
                     <button type="button" class="btn btn-secondary me-2" @onclick="HandleCancelClick">
-                        Cancel
+                        @Localizer["label_next"]
                     </button>
-                    <button type="submit" class="btn btn-primary">Next</button>
+                    <button type="submit" class="btn btn-primary">@Localizer["label_next"]</button>
                 </div>
             </div>
 
