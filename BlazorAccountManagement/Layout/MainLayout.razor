@@ -1,6 +1,10 @@
-﻿
+﻿@using BlazorAccountManagement.Models
+
 @inherits LayoutComponentBase
 @inject IStringLocalizer<App> Localizer
+@inject IRageApiService RageApiService
+@inject RedirectService RedirectService
+@inject AppData AppData
 
 <div class="page">
     <div class="sidebar">
@@ -9,14 +13,14 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+           
             <div class="dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    @userEmail
+                    @AppData.Email
                     <i class="bi bi-person-circle"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="/logout">@Localizer["label_logout"]</a></li>
+                    <li><a class="dropdown-item" href="" @onclick="HandleLogoutClick">@Localizer["label_logout"]</a></li>
                 </ul>
             </div>
 
@@ -28,5 +32,25 @@
     </main>
 </div>
 @code {
-    private string userEmail = "user@example.com"; // Replace with actual user email retrieval logic
+    private bool isInitialized = false;
+    private async void HandleLogoutClick()
+    {
+        Console.WriteLine("HandleLogoutClick button clicked");
+        var logoutResponse = await RageApiService.PostLogoutAsync(new LogoutRequest { });
+        if (logoutResponse != null)
+        {
+            var response = logoutResponse.Response;
+            RedirectService.RedirectToUrl("/");
+            isInitialized = false;
+        }
+        // bring back the original data
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var wrappedResponse = await RageApiService.GetUserIdentityInfoAsync();
+        var response = wrappedResponse?.Response;
+        isInitialized = true;
+        AppData.Email = response?.Email;
+
+    }
 }

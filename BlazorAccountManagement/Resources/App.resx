@@ -177,4 +177,16 @@
   <data name="label_confirm_password" xml:space="preserve">
     <value>Confirm Password</value>
   </data>
+  <data name="message_loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="message_password_updated" xml:space="preserve">
+    <value>Your password has been updated.</value>
+  </data>
+  <data name="label_success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="label_close" xml:space="preserve">
+    <value>Close</value>
+  </data>
 </root>

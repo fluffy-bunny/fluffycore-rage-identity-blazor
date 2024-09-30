@@ -1,25 +1,33 @@
 ﻿@page "/"
-@using BlazorAccountManagement.Models
-@using System.ComponentModel.DataAnnotations
 @inject IStringLocalizer<App> Localizer
 @inject IJSRuntime JS
+@inject IRageApiService RageApiService
+@inject RedirectService RedirectService
+@inject AppData AppData
 
 <PageTitle>@Localizer["label_profile"]</PageTitle>
 
 <h1>@Localizer["label_profile"]</h1>
 
+
+@if (!isInitialized)
+{
+    <p>@Localizer["message_loading"]</p>
+}
+else
+{
 <EditForm Model="@userProfile" OnValidSubmit="HandleValidSubmit">
-    <p>@string.Format(Localizer["message_profile_page"], verifyCodeModel.Email)</p>
+        <p>@string.Format(Localizer["message_profile_page"], AppData.Email)</p>
 
     <div class="form-group mb-3">
         <div class="form-floating">
-            <input placeholder="@Localizer["label_first_name"]" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="userProfile.FirstName" readonly="@isReadOnly">
+            <input placeholder="@Localizer["label_first_name"]" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="userProfile.GivenName" readonly="@isReadOnly">
             <label for="code">@Localizer["label_first_name"]</label>
         </div>
     </div>
     <div class="form-group mb-3">
         <div class="form-floating">
-            <input placeholder="@Localizer["label_last_name"]" type="text" class="form-control" id="code" required @bind-value="userProfile.LastName" readonly="@isReadOnly">
+            <input placeholder="@Localizer["label_last_name"]" type="text" class="form-control" id="code" required @bind-value="userProfile.FamilyName" readonly="@isReadOnly">
             <label for="code">@Localizer["label_last_name"]</label>
         </div>
     </div>
@@ -54,9 +62,10 @@
  
 </EditForm>
  
-
+}
 
 @code {
+    private bool isInitialized = false;
     public class VerifyCodeModel
     {
         [Required]
@@ -69,11 +78,7 @@
             Email = "test@test.com"
         };
     private ElementReference inputCodeElement;
-    private UserProfile userProfile = new UserProfile
-        {
-            FirstName = "John",
-            LastName = "Doe"
-        };
+    private UserProfile userProfile = new UserProfile();
 
     private bool isReadOnly = true;
 
@@ -97,5 +102,13 @@
         {
             await JS.InvokeVoidAsync("setFocus", inputCodeElement);
         }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var wrappedResponse = await RageApiService.GetUserProfileAsync();
+        var response = wrappedResponse?.Response;
+        userProfile = response;
+        isInitialized = true;
+
     }
 }
