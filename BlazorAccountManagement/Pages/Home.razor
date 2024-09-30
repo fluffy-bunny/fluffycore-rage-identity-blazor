@@ -1,0 +1,101 @@
+﻿@page "/"
+@using BlazorAccountManagement.Models
+@using System.ComponentModel.DataAnnotations
+@inject IStringLocalizer<App> Localizer
+@inject IJSRuntime JS
+
+<PageTitle>@Localizer["label_profile"]</PageTitle>
+
+<h1>@Localizer["label_profile"]</h1>
+
+<EditForm Model="@userProfile" OnValidSubmit="HandleValidSubmit">
+    <p>@string.Format(Localizer["message_profile_page"], verifyCodeModel.Email)</p>
+
+    <div class="form-group mb-3">
+        <div class="form-floating">
+            <input placeholder="@Localizer["label_first_name"]" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="userProfile.FirstName" readonly="@isReadOnly">
+            <label for="code">@Localizer["label_first_name"]</label>
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <div class="form-floating">
+            <input placeholder="@Localizer["label_last_name"]" type="text" class="form-control" id="code" required @bind-value="userProfile.LastName" readonly="@isReadOnly">
+            <label for="code">@Localizer["label_last_name"]</label>
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <div class="form-floating">
+            <input placeholder="@Localizer["label_phone_number"]" type="text" class="form-control" id="code" @bind-value="userProfile.PhoneNumber" readonly="@isReadOnly">
+            <label for="code">@Localizer["label_phone_number"]</label>
+        </div>
+    </div>
+    @if (!isReadOnly)
+    {
+        <!-- Wizard Buttons -->
+        <div class="d-flex justify-content-end mb-3 wizard-buttons">
+            <div>
+                <button type="button" class="btn btn-secondary me-2" @onclick="HandleCancelClick">
+                    @Localizer["label_cancel"]
+                </button>
+                <button type="submit" class="btn btn-primary">@Localizer["label_save"]</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Wizard Buttons -->
+        <div class="d-flex justify-content-end mb-3 wizard-buttons">
+            <div>
+                <button class="btn btn-primary" @onclick="ToggleEdit">@Localizer["label_edit"]</button>
+            </div>
+        </div>
+         
+    }
+ 
+</EditForm>
+ 
+
+
+@code {
+    public class VerifyCodeModel
+    {
+        [Required]
+        public string Code { get; set; }
+
+        public string Email { get; set; }
+    }
+    private VerifyCodeModel verifyCodeModel = new VerifyCodeModel()
+        {
+            Email = "test@test.com"
+        };
+    private ElementReference inputCodeElement;
+    private UserProfile userProfile = new UserProfile
+        {
+            FirstName = "John",
+            LastName = "Doe"
+        };
+
+    private bool isReadOnly = true;
+
+    private void ToggleEdit()
+    {
+        isReadOnly = !isReadOnly;
+    }
+    private async void HandleCancelClick()
+    {
+        Console.WriteLine("HandleCancelClick button clicked");
+        isReadOnly = true;
+        // bring back the original data
+    }
+    private async void HandleValidSubmit()
+    {
+        Console.WriteLine("submit button clicked");
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("setFocus", inputCodeElement);
+        }
+    }
+}

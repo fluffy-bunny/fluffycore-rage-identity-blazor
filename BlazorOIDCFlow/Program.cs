@@ -38,8 +38,7 @@ else
     builder.Services.AddScoped<IRageApiService, LocalRageApiService>();
 }
 builder.Services.AddScoped<RedirectService>();
-builder.Services.AddBlazorBootstrap();
-
+ 
 var host = builder.Build();
 // Set the culture
 var supportedCultures = new[] { new CultureInfo("en") };
