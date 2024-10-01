@@ -189,4 +189,19 @@
   <data name="label_close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="message_success_update_profile" xml:space="preserve">
+    <value>Your profile has been successfully updated.</value>
+  </data>
+  <data name="label_error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="message_error_profile_update" xml:space="preserve">
+    <value>There was a problem updating your profile!</value>
+  </data>
+  <data name="message_error_password_update" xml:space="preserve">
+    <value>There was a problem updating your password!</value>
+  </data>
+  <data name="message_error_passwords_do_not_match" xml:space="preserve">
+    <value>passwords do not match!</value>
+  </data>
 </root>

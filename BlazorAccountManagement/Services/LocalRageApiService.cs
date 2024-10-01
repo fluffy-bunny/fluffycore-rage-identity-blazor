@@ -116,5 +116,21 @@ namespace BlazorAccountManagement.Services
                 StatusCode = HttpStatusCode.OK
             };
         }
+        public async Task<ResponseWrapper<VerifyCodeResponse?>?> VerifyCodeAsync(VerifyCodeRequest request)
+        {
+            if (request.Code == "1234")
+            {
+                var response = new VerifyCodeResponse
+                {
+
+                };
+                return new ResponseWrapper<VerifyCodeResponse?>
+                {
+                    Response = response,
+                    StatusCode = HttpStatusCode.OK
+                };
+            }
+            return null;
+        }
     }
 }

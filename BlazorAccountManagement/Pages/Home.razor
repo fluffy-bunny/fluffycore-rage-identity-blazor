@@ -1,4 +1,5 @@
 ﻿@page "/"
+
 @inject IStringLocalizer<App> Localizer
 @inject IJSRuntime JS
 @inject IRageApiService RageApiService
@@ -61,22 +62,42 @@ else
     }
  
 </EditForm>
- 
+    <div class="modal fade @(showSuccessModal ? "show d-block" : "")" tabindex="-1" style="display: @(showSuccessModal ? "block" : "none");" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-success">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">@Localizer["label_success"]</h5>
+                </div>
+                <div class="modal-body">
+                    <p>@Localizer["message_success_update_profile"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="ToggleSuccessModal">@Localizer["label_close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade @(showErrorModal ? "show d-block" : "")" tabindex="-1" style="display: @(showErrorModal ? "block" : "none");" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">@Localizer["label_error"]</h5>
+                </div>
+                <div class="modal-body">
+                    <p>@Localizer["message_error_profile_update"]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="ToggleErrorModal">@Localizer["label_close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
     private bool isInitialized = false;
-    public class VerifyCodeModel
-    {
-        [Required]
-        public string Code { get; set; }
 
-        public string Email { get; set; }
-    }
-    private VerifyCodeModel verifyCodeModel = new VerifyCodeModel()
-        {
-            Email = "test@test.com"
-        };
     private ElementReference inputCodeElement;
     private UserProfile userProfile = new UserProfile();
 
@@ -95,6 +116,17 @@ else
     private async void HandleValidSubmit()
     {
         Console.WriteLine("submit button clicked");
+        var wrappedResponse = await RageApiService.PostUserProfileAsync(userProfile);
+        if (wrappedResponse?.StatusCode == HttpStatusCode.OK)
+        {
+            ToggleSuccessModal();
+            isReadOnly = true;
+        }
+        else
+        {
+            ToggleErrorModal();
+        }
+
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -110,5 +142,16 @@ else
         userProfile = response;
         isInitialized = true;
 
+    }
+    private bool showSuccessModal = false;
+    private bool showErrorModal = false;
+    private void ToggleSuccessModal()
+    {
+        showSuccessModal = !showSuccessModal;
+    }
+
+    private void ToggleErrorModal()
+    {
+        showErrorModal = !showErrorModal;
     }
 }

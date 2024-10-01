@@ -100,8 +100,10 @@ namespace BlazorAccountManagement.Services
         public async Task<ResponseWrapper<UserIdentityInfo?>?> GetUserIdentityInfoAsync()
         {
             return await GetAsync<UserIdentityInfo>("/api/user-identity-info");
-
         }
-
+        public async Task<ResponseWrapper<VerifyCodeResponse?>?> VerifyCodeAsync(VerifyCodeRequest request)
+        {
+            return await PostAsync<VerifyCodeRequest, VerifyCodeResponse>("/api/verify-code", request);
+        }
     }
 }
