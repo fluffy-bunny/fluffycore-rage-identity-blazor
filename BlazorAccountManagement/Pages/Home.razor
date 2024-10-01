@@ -130,7 +130,7 @@ else
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && isInitialized)
         {
             await JS.InvokeVoidAsync("setFocus", inputCodeElement);
         }
@@ -141,6 +141,7 @@ else
         var response = wrappedResponse?.Response;
         userProfile = response;
         isInitialized = true;
+
 
     }
     private bool showSuccessModal = false;
