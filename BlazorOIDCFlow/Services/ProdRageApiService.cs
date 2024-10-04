@@ -9,15 +9,16 @@ namespace BlazorOIDCFlow.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IJSRuntime _jsRuntime;
-        private readonly IConfiguration _configuration;
         private readonly string? _baseApiUrl;
+        private readonly AppSettings _appSettings;
 
-        public ProdRageApiService(IConfiguration configuration, HttpClient httpClient, IJSRuntime jsRuntime)
+        public ProdRageApiService( AppSettings appSettings,HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
             _jsRuntime = jsRuntime;
-            _configuration = configuration;
-            _baseApiUrl = _configuration.GetValue<string>("BaseAPIUrl");
+            _appSettings = appSettings;
+
+            _baseApiUrl = appSettings.BaseApiUrl;
             if (!string.IsNullOrEmpty(_baseApiUrl))
             {
                 _httpClient.BaseAddress = new Uri(_baseApiUrl);

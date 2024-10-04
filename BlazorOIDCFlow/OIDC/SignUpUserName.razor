@@ -120,7 +120,16 @@
                 await SetStep.InvokeAsync(OIDCPage.SigninUserName);
                 return;
             case HttpStatusCode.OK:
-                await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+
+                if (response.DirectiveEmailCodeChallenge != null)
+                {
+                    await SetStep.InvokeAsync(OIDCPage.VerifyCode);
+                }
+                else
+                {
+                    await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+                }
+
                 return;
         }
        

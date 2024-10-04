@@ -19,19 +19,19 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 
 var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
-var response = await httpClient.GetAsync("appsettings.json");
-if (response.StatusCode != HttpStatusCode.OK)
-{
-    response = await httpClient.GetAsync("/api/appsettings");
-}
- 
+//var response = await httpClient.GetAsync("appsettings.json");
+var response = await httpClient.GetAsync("/api/appsettings");
+
 var json = await response.Content.ReadAsStringAsync();
+AppSettings appSettings = await System.Text.Json.JsonSerializer.DeserializeAsync<AppSettings>(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json)));
+builder.Services.AddSingleton(appSettings);
 
-var configuration = new ConfigurationBuilder()
-    .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(json)))
-    .Build();
+var applicationEnvironment = appSettings.ApplicationEnvironment;
 
-var applicationEnvironment = configuration.GetValue<string>("ApplicationEnvironment");
+Console.WriteLine($"Application Environment: {applicationEnvironment}");
+Console.WriteLine($"Base API URL: {appSettings.BaseApiUrl}");
+
+
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
