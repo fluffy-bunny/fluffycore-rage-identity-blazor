@@ -94,7 +94,7 @@
         if (wrapper == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("error with external login");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": siu:002");
             return;
         }
         var response = wrapper?.Response;
@@ -129,14 +129,14 @@
         if (statusCode == HttpStatusCode.NotFound)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("user not found");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_user_not_found"]);
             return;
         }
 
         if (response == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid username");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_username"]);
             return;
         }
 
@@ -158,7 +158,7 @@
 
             {
                 // show info message
-                await ShowInfoMessage.InvokeAsync("error with external login");
+                await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": siu:000");
                 return;
             }
             var startExternalLoginResponse = wrapper2.Response;
@@ -168,7 +168,7 @@
                 RedirectService.RedirectToUrl(startExternalLoginResponse.RedirectUri);
                 return;
             }
-            await ShowInfoMessage.InvokeAsync("error with external login");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": siu:001");
             return;
         }
         // Call SetStep with the desired step value

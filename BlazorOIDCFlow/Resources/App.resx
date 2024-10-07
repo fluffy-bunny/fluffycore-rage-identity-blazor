@@ -180,4 +180,28 @@
   <data name="label_enter_code" xml:space="preserve">
     <value>Enter Code</value>
   </data>
+  <data name="message_invalid_password" xml:space="preserve">
+    <value>The password is invalid. Try making it stronger.</value>
+  </data>
+  <data name="message_unknown_error" xml:space="preserve">
+    <value>An unknown error has occured!</value>
+  </data>
+  <data name="message_password_mismatch" xml:space="preserve">
+    <value>The passwords do not match!</value>
+  </data>
+  <data name="message_user_already_exists" xml:space="preserve">
+    <value>User already exists</value>
+  </data>
+  <data name="message_invalid_code" xml:space="preserve">
+    <value>Invalid code</value>
+  </data>
+  <data name="message_user_not_found" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="message_invalid_username" xml:space="preserve">
+    <value>Invalid username</value>
+  </data>
+  <data name="message_invalid_username_or_password" xml:space="preserve">
+    <value>Invalid username or password</value>
+  </data>
 </root>

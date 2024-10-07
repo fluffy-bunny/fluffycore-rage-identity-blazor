@@ -282,6 +282,7 @@ namespace BlazorOIDCFlow.Data
     {
         PasswordResetErrorReason_NoError = 0,
         PasswordResetErrorReason_InvalidPassword = 1,
+        PasswordResetErrorReason_PasswordsDoNotMatch = 2,
     }
     public class PasswordResetFinishResponse  {
         [JsonPropertyName("directive")]

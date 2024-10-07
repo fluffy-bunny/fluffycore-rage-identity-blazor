@@ -108,7 +108,7 @@
         if (wrapper == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Error signing up");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": suu:000");
             return;
         }
         var statusCode = wrapper.StatusCode;
@@ -116,7 +116,7 @@
         switch (statusCode)
         {
             case HttpStatusCode.Found:
-                await ShowInfoMessage.InvokeAsync("User already exists");
+                await ShowInfoMessage.InvokeAsync(Localizer["message_user_already_exists"]);
                 await SetStep.InvokeAsync(OIDCPage.SigninUserName);
                 return;
             case HttpStatusCode.OK:
@@ -135,22 +135,24 @@
        
         if (response != null)
         {
-
+            var message = Localizer["message_unknown_error"];
             switch (response?.ErrorReason)
             {
                 case SignupErrorReason.SignupErrorReason_NoError:
                     await SetStep.InvokeAsync(OIDCPage.SigninUserName);
                     return;
                 case SignupErrorReason.SignupErrorReason_InvalidPassword:
-                    await ShowInfoMessage.InvokeAsync("Invalid password.  Make it stronger");
+                    message = Localizer["message_invalid_password"];
+                    await ShowInfoMessage.InvokeAsync(message);
                     break;
 
                 case SignupErrorReason.SignupErrorReason_UserAlreadyExists:
-                    await ShowInfoMessage.InvokeAsync("User already exists");
+                    message = Localizer["message_user_already_exists"];
+                    await ShowInfoMessage.InvokeAsync(message);
                     await SetStep.InvokeAsync(OIDCPage.SigninUserName);
                     return;
                 default:
-                    await ShowInfoMessage.InvokeAsync("Error signing up");
+                    await ShowInfoMessage.InvokeAsync(message);
                     break;
             }
         }

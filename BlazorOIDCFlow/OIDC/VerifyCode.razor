@@ -53,7 +53,7 @@
         if (verifyCodeBeginResponse == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid verification code state");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": vc:000");
             return;
         }
         verifyCodeModel.Code = verifyCodeBeginResponse.Code;
@@ -88,13 +88,13 @@
         var wrapper = await RageApiService.VerifyCodeAsync(request);
         if (wrapper == null){
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid code");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_code"]);
             return;
         }
         var statusCode = wrapper.StatusCode;
         if (statusCode == HttpStatusCode.NotFound){
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid code");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_code"]);
             return;
         }
         
@@ -102,7 +102,7 @@
         if (response == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid code");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_code"]);
             return;
         }
         if (Model.Directive == Directive.Directive_ResetPassword)
