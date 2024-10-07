@@ -10,7 +10,7 @@
         @Localizer["label_sign_in"]
     </div>
     <div class="card-body">
-        <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
+        <EditForm Model="@Model" OnValidSubmit="HandleOnNext">
 
              <div class="form-group mb-3">
                 <div class="form-floating">
@@ -69,6 +69,7 @@
     {
         emailModel.Email = Model.Email;
         Model.Directive = Directive.Directive_Login;
+
     }
     [Parameter]
     public EventCallback<OIDCPage> SetStep { get; set; }
@@ -112,7 +113,7 @@
         await SetStep.InvokeAsync(OIDCPage.SignUpUserName);
     }
 
-    private async void HandleValidSubmit()
+    private async void HandleOnNext()
     {
         // Handle the form submission
         Model.Email = emailModel.Email;

@@ -1,4 +1,5 @@
-﻿@inject IRageApiService RageApiService
+﻿@using System.Net
+@inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 @inject IJSRuntime JS
 @inject IStringLocalizer<App> Localizer
@@ -90,6 +91,13 @@
             await ShowInfoMessage.InvokeAsync("Invalid code");
             return;
         }
+        var statusCode = wrapper.StatusCode;
+        if (statusCode == HttpStatusCode.NotFound){
+            // show info message
+            await ShowInfoMessage.InvokeAsync("Invalid code");
+            return;
+        }
+        
         var response = wrapper.Response;
         if (response == null)
         {
