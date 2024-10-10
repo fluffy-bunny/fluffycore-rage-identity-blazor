@@ -1,3 +1,4 @@
+using BlazorAccountManagement.Services;
 using BlazorOIDCFlow;
 using BlazorOIDCFlow.Contracts;
 using BlazorOIDCFlow.Services;
@@ -6,23 +7,28 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Globalization;
 using System.Net;
 using System.Text;
 
+
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
+var environment = builder.HostEnvironment.Environment;
+Console.WriteLine($"Current environment: {environment}");
 
 // Add localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 
 var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
-var response = await httpClient.GetAsync("appsettings.json");
-//var response = await httpClient.GetAsync("/api/appsettings");
+var configService = new ConfigService(httpClient);
 
-var json = await response.Content.ReadAsStringAsync();
+var json = await configService.GetAppSettingsAsync();
 AppSettings appSettings = await System.Text.Json.JsonSerializer.DeserializeAsync<AppSettings>(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json)));
 builder.Services.AddSingleton(appSettings);
 

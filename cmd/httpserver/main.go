@@ -61,6 +61,10 @@ func main() {
 	port := flag.String("port", "7080", "Port to listen on")
 	flag.Parse()
 
+	// read env variables
+	env := os.Getenv("ASPNETCORE_ENVIRONMENT")
+	fmt.Printf("ASPNETCORE_ENVIRONMENT: %s\n", env)
+
 	guid := xid.New().String()
 
 	// Load index files into memory

@@ -7,5 +7,5 @@
 ```
 
 ```powershell
- .\httpserver.exe -port 7080 -wwwroot "./BlazorAccountManagement/publish/wwwroot"
+$env:ASPNETCORE_ENVIRONMENT = "Development"; .\httpserver.exe
 ```

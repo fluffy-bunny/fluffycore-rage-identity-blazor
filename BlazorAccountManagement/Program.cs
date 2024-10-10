@@ -8,22 +8,26 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using System.Text;
- 
+
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
+
+var environment = builder.HostEnvironment.Environment;
+Console.WriteLine($"Current environment: {environment}");
+
 builder.Services.AddScoped<ModalService>();
+
+var configService = new ConfigService(httpClient);
 
 
 // Add localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
-var response = await httpClient.GetAsync("appsettings.json");
-//var response = await httpClient.GetAsync("/api/appsettings");
-
-var json = await response.Content.ReadAsStringAsync();
+var json = await configService.GetAppSettingsAsync();
 
 var configuration = new ConfigurationBuilder()
     .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(json)))
