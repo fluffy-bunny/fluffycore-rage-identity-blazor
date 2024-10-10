@@ -19,8 +19,8 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 
 var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
-//var response = await httpClient.GetAsync("appsettings.json");
-var response = await httpClient.GetAsync("/api/appsettings");
+var response = await httpClient.GetAsync("appsettings.json");
+//var response = await httpClient.GetAsync("/api/appsettings");
 
 var json = await response.Content.ReadAsStringAsync();
 AppSettings appSettings = await System.Text.Json.JsonSerializer.DeserializeAsync<AppSettings>(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json)));
