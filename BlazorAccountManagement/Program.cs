@@ -13,6 +13,9 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+builder.Services.AddScoped<ModalService>();
+
+
 // Add localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 

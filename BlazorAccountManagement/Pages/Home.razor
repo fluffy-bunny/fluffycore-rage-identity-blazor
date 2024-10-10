@@ -62,6 +62,8 @@ else
     }
  
 </EditForm>
+
+
     <div class="modal fade @(showSuccessModal ? "show d-block" : "")" tabindex="-1" style="display: @(showSuccessModal ? "block" : "none");" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content border-success">
@@ -69,10 +71,10 @@ else
                     <h5 class="modal-title">@Localizer["label_success"]</h5>
                 </div>
                 <div class="modal-body">
-                    <p>@Localizer["message_success_update_profile"]</p>
+                    <p>@successMessage</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="ToggleSuccessModal">@Localizer["label_close"]</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="() => ToggleSuccessModal()">@Localizer["label_close"]</button>
                 </div>
             </div>
         </div>
@@ -85,10 +87,10 @@ else
                     <h5 class="modal-title">@Localizer["label_error"]</h5>
                 </div>
                 <div class="modal-body">
-                    <p>@Localizer["message_error_profile_update"]</p>
+                    <p>@errorMessage</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="ToggleErrorModal">@Localizer["label_close"]</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="() => ToggleErrorModal()">@Localizer["label_close"]</button>
                 </div>
             </div>
         </div>
@@ -115,18 +117,25 @@ else
     }
     private async void HandleValidSubmit()
     {
-        Console.WriteLine("submit button clicked");
-        var wrappedResponse = await RageApiService.PostUserProfileAsync(userProfile);
-        if (wrappedResponse?.StatusCode == HttpStatusCode.OK)
+        try
         {
-            ToggleSuccessModal();
-            isReadOnly = true;
+            Console.WriteLine("submit button clicked");
+            var wrappedResponse = await RageApiService.PostUserProfileAsync(userProfile);
+            if (wrappedResponse?.StatusCode == HttpStatusCode.OK)
+            {
+                ToggleSuccessModal(Localizer["message_success_update_profile"]);
+                isReadOnly = true;
+            }
+            else
+            {
+                ToggleSuccessModal(Localizer["message_error_profile_update"]);
+            }
         }
-        else
+        finally
         {
-            ToggleErrorModal();
+            // Trigger re-render
+            StateHasChanged();
         }
-
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -144,15 +153,30 @@ else
 
 
     }
+    private string successMessage { get; set; }
+    private string errorMessage { get; set; }
     private bool showSuccessModal = false;
     private bool showErrorModal = false;
-    private void ToggleSuccessModal()
+    private void ToggleSuccessModal(string message = null)
     {
+        successMessage = message;
         showSuccessModal = !showSuccessModal;
+        if (!showSuccessModal)
+        {
+            // reset the success message
+            successMessage = "";
+        }
     }
 
-    private void ToggleErrorModal()
+    private void ToggleErrorModal(string message = null)
     {
+        errorMessage = message;
         showErrorModal = !showErrorModal;
+        if (!showErrorModal)
+        {
+            // reset the error message
+            errorMessage = "";
+        }
     }
 }
+

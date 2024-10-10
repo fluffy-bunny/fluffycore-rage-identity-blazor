@@ -193,7 +193,7 @@
     <value>User already exists</value>
   </data>
   <data name="message_invalid_code" xml:space="preserve">
-    <value>Invalid code</value>
+    <value>Invalid Code!</value>
   </data>
   <data name="message_user_not_found" xml:space="preserve">
     <value>User not found</value>

@@ -204,4 +204,10 @@
   <data name="message_error_passwords_do_not_match" xml:space="preserve">
     <value>passwords do not match!</value>
   </data>
+  <data name="message_invalid_code" xml:space="preserve">
+    <value>Invalid Code!</value>
+  </data>
+  <data name="message_error_unknown_template" xml:space="preserve">
+    <value>Unknown error: {0}</value>
+  </data>
 </root>
