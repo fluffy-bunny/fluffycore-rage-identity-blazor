@@ -13,17 +13,17 @@ import (
 )
 
 var (
-	indexRoot string
-	indexApp1 string
-	indexApp2 string
+	indexRoot        string
+	indexOidcLoginUI string
+	indexManagement  string
 )
 
 func noCacheMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if strings.HasSuffix(c.Request().URL.Path, "index.html") ||
 			c.Request().URL.Path == "/" ||
-			c.Request().URL.Path == "/app1" ||
-			c.Request().URL.Path == "/app2" {
+			c.Request().URL.Path == "/oidc-login-ui" ||
+			c.Request().URL.Path == "/management" {
 			c.Response().Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 			c.Response().Header().Set("Pragma", "no-cache")
 			c.Response().Header().Set("Expires", "0")
@@ -38,7 +38,7 @@ func serveIndexFromMemory(content string) echo.HandlerFunc {
 	}
 }
 
-func createAppHandler(staticMiddleware echo.MiddlewareFunc, indexContent string, rootPath string) echo.HandlerFunc {
+func createStaticUIHandler(staticMiddleware echo.MiddlewareFunc, indexContent string, rootPath string) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		path := c.Request().URL.Path
 		if path == rootPath {
@@ -72,19 +72,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	indexApp1Content, err := os.ReadFile("static/app1/wwwroot/index_template.html")
+	indexOIDCLoginUI1Content, err := os.ReadFile("static/oidc-login-ui/wwwroot/index_template.html")
 	if err != nil {
 		panic(err)
 	}
-	indexApp2Content, err := os.ReadFile("static/app2/wwwroot/index_template.html")
+	indexManagementContent, err := os.ReadFile("static/management/wwwroot/index_template.html")
 	if err != nil {
 		panic(err)
 	}
 
 	// Replace {version} with guid in all index files
 	indexRoot = strings.ReplaceAll(string(indexRootContent), "{version}", guid)
-	indexApp1 = strings.ReplaceAll(string(indexApp1Content), "{version}", guid)
-	indexApp2 = strings.ReplaceAll(string(indexApp2Content), "{version}", guid)
+	indexOidcLoginUI = strings.ReplaceAll(string(indexOIDCLoginUI1Content), "{version}", guid)
+	indexManagement = strings.ReplaceAll(string(indexManagementContent), "{version}", guid)
 
 	e := echo.New()
 
@@ -95,23 +95,23 @@ func main() {
 	// Serve root index.html from memory
 	e.GET("/", serveIndexFromMemory(indexRoot))
 
-	// Serve static files and handle routing for app1
-	app1Static := middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   "static/app1/wwwroot",
+	// Serve static files and handle routing for oidc-login-ui
+	oidcLoginUIStatic := middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:   "static/oidc-login-ui/wwwroot",
 		HTML5:  true,
 		Browse: false,
 	})
 
-	e.GET("/app1/*", createAppHandler(app1Static, indexApp1, "/app1/"))
+	e.GET("/oidc-login-ui/*", createStaticUIHandler(oidcLoginUIStatic, indexOidcLoginUI, "/oidc-login-ui/"))
 
-	// Serve static files and handle routing for app2
-	app2Static := middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   "static/app2/wwwroot",
+	// Serve static files and handle routing for management
+	managementStatic := middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:   "static/management/wwwroot",
 		HTML5:  true,
 		Browse: false,
 	})
 
-	e.GET("/app2/*", createAppHandler(app2Static, indexApp2, "/app2/"))
+	e.GET("/management/*", createStaticUIHandler(managementStatic, indexManagement, "/management/"))
 
 	// Serve other static files from the root static folder
 	e.Static("/", "static")

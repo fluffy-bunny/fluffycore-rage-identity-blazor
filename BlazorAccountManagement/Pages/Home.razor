@@ -18,23 +18,23 @@
 else
 {
 <EditForm Model="@userProfile" OnValidSubmit="HandleValidSubmit">
-        <p>@string.Format(Localizer["message_profile_page"], AppData.Email)</p>
+    <p>@string.Format(Localizer["message_profile_page"], AppData.Email)</p>
 
     <div class="form-group mb-3">
         <div class="form-floating">
-            <input placeholder="@Localizer["label_first_name"]" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="userProfile.GivenName" readonly="@isReadOnly">
+            <input placeholder="@Localizer["label_first_name"]" @ref="inputCodeElement" type="text" class="form-control" id="firstName" required @bind-value="userProfile.GivenName" readonly="@isReadOnly">
             <label for="code">@Localizer["label_first_name"]</label>
         </div>
     </div>
     <div class="form-group mb-3">
         <div class="form-floating">
-            <input placeholder="@Localizer["label_last_name"]" type="text" class="form-control" id="code" required @bind-value="userProfile.FamilyName" readonly="@isReadOnly">
+            <input placeholder="@Localizer["label_last_name"]" type="text" class="form-control" id="lastName" required @bind-value="userProfile.FamilyName" readonly="@isReadOnly">
             <label for="code">@Localizer["label_last_name"]</label>
         </div>
     </div>
     <div class="form-group mb-3">
         <div class="form-floating">
-            <input placeholder="@Localizer["label_phone_number"]" type="text" class="form-control" id="code" @bind-value="userProfile.PhoneNumber" readonly="@isReadOnly">
+            <input placeholder="@Localizer["label_phone_number"]" type="text" class="form-control" id="phoneNumber" @bind-value="userProfile.PhoneNumber" readonly="@isReadOnly">
             <label for="code">@Localizer["label_phone_number"]</label>
         </div>
     </div>
