@@ -72,11 +72,30 @@
 
 
 
-    private void HandleSocialLoginButtonClick(string slug)
+    private async Task HandleSocialLoginButtonClick(string slug)
 
     {
         // Handle the button click event here
-        Console.WriteLine($"Button clicked: {slug}");
+        Console.WriteLine($"HandleSocialLoginButtonClick: {slug}");
+        var request = new StartExternalLoginRequest
+            {
+                Slug = slug,
+                Directive = "signup"
+            };
+        var wrapper = await RageApiService.StartExternalLoginAsync(request);
+        if (wrapper == null)
+        {
+            // show info message
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": suu:001");
+            return;
+        }
+        var response = wrapper?.Response;
+
+        if (response != null)
+        {
+            Console.WriteLine($"Response: {response}");
+            RedirectService.RedirectToUrl(response.RedirectUri);
+        }
     }
     private async void HandleSigninClick()
     {
