@@ -1,0 +1,123 @@
+name: .NET and Go Build
+
+on:
+  push:
+    branches: ["**"]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".vscode/**"
+      - ".github/dependabot.yml"
+      - ".env"
+      - "docker-compose.yml"
+      - "docker/**"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+    branches: [main]
+
+env:
+  BINARY: "server"
+  GO_VERSION: "1.23"
+  BASE_VERSION: "1.0.0"
+  IMAGE_NAME: "NA"
+
+jobs:
+  pre_flight:
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
+    steps:
+      - name: Establish tags and versions
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [pre_flight]
+    steps:
+      - name: Echo Tags
+        run: |
+          echo new_tag: ${{needs.pre_flight.outputs.new_tag}} 
+          echo changelog: ${{needs.pre_flight.outputs.changelog}}
+
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "^${{ env.GO_VERSION }}"
+
+      - name: Build and Publish BlazorOIDCFlow
+        run: |
+          cd BlazorOIDCFlow
+          dotnet publish -c Release -o ./publish
+          cd ..
+
+      - name: Process BlazorOIDCFlow Output
+        run: |
+          rm -rf ./cmd/httpserver/static/oidc-login-ui/wwwroot
+          cp -r ./BlazorOIDCFlow/publish/wwwroot ./cmd/httpserver/static/oidc-login-ui/wwwroot
+          mv ./cmd/httpserver/static/oidc-login-ui/wwwroot/index.html ./cmd/httpserver/static/oidc-login-ui/wwwroot/index_template.html
+          sed -i 's#<base href="/" />#<base href="/oidc-login-ui/" />#' ./cmd/httpserver/static/oidc-login-ui/wwwroot/index_template.html
+
+      - name: Build and Publish BlazorAccountManagement
+        run: |
+          cd BlazorAccountManagement
+          dotnet publish -c Release -o ./publish
+          cd ..
+
+      - name: Process BlazorAccountManagement Output
+        run: |
+          rm -rf ./cmd/httpserver/static/management/wwwroot
+          cp -r ./BlazorAccountManagement/publish/wwwroot ./cmd/httpserver/static/management/wwwroot
+          mv ./cmd/httpserver/static/management/wwwroot/index.html ./cmd/httpserver/static/management/wwwroot/index_template.html
+          sed -i 's#<base href="/" />#<base href="/management/" />#' ./cmd/httpserver/static/management/wwwroot/index_template.html
+
+      - name: Build Go Server
+        run: |
+          cd ./cmd/httpserver/
+          go build .
+          cd ../..
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Upload Static Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: static-files-${{needs.pre_flight.outputs.new_tag}}
+          path: ./cmd/httpserver/static
+          if-no-files-found: error
+
+      - name: Download Artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/download-artifact@v3
+        with:
+          name: static-files-${{needs.pre_flight.outputs.new_tag}}
+          path: ./static-files
+
+      - name: Zip Static Files
+        if: github.ref == 'refs/heads/main'
+        run: zip -r static-files.zip ./static-files
+
+      - name: Create Release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{needs.pre_flight.outputs.new_tag}} \
+            --title "Release ${{needs.pre_flight.outputs.new_tag}}" \
+            --notes "${{needs.pre_flight.outputs.changelog}}" \
+            --repo ${{ github.repository }} \
+            static-files.zip
+
+          echo "Release ${{needs.pre_flight.outputs.new_tag}} created successfully with attached artifacts"
