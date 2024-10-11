@@ -1,18 +1,20 @@
-﻿@inject IRageApiService RageApiService
+﻿@using System.Net
+@inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 @inject IJSRuntime JS
+@inject IStringLocalizer<App> Localizer
 
-<div class="card">
+<div>
     <div class="card-header">
-        Verify Code
+        @Localizer["label_verify_code"]
     </div>
     <div class="card-body">
-        <p>A verification code has be emailed to @verifyCodeModel.Email If an account exists.</p>
-         <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
+        <p>@string.Format(Localizer["message_verify_code"], verifyCodeModel.Email)</p>
+        <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
             <div class="form-group mb-3">
                 <div class="form-floating">
-                    <input placeholder="Enter Code" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="verifyCodeModel.Code">
-                    <label for="code">Enter Code</label>
+                    <input placeholder="@Localizer["label_enter_code"]" @ref="inputCodeElement" type="text" class="form-control" id="code" required @bind-value="verifyCodeModel.Code">
+                    <label for="code">@Localizer["label_enter_code"]</label>
                 </div>
             </div>
             
@@ -20,9 +22,9 @@
             <div class="d-flex justify-content-end mb-3 wizard-buttons">
                 <div>
                     <button type="button" class="btn btn-secondary me-2" @onclick="HandleCancelClick">
-                        Cancel
+                        @Localizer["label_back"]
                     </button>
-                    <button type="submit" class="btn btn-primary">Next</button>
+                    <button type="submit" class="btn btn-primary">@Localizer["label_next"]</button>
                 </div>
             </div>
 
@@ -51,7 +53,7 @@
         if (verifyCodeBeginResponse == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid verification code state");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": vc:000");
             return;
         }
         verifyCodeModel.Code = verifyCodeBeginResponse.Code;
@@ -86,14 +88,21 @@
         var wrapper = await RageApiService.VerifyCodeAsync(request);
         if (wrapper == null){
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid code");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_code"]);
             return;
         }
+        var statusCode = wrapper.StatusCode;
+        if (statusCode == HttpStatusCode.NotFound){
+            // show info message
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_code"]);
+            return;
+        }
+        
         var response = wrapper.Response;
         if (response == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid code");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_code"]);
             return;
         }
         if (Model.Directive == Directive.Directive_ResetPassword)

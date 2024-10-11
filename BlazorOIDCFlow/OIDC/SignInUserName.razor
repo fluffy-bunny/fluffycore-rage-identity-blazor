@@ -3,18 +3,19 @@
 @inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 @inject IJSRuntime JS
+@inject IStringLocalizer<App> Localizer
 
-<div class="card">
+<div>
     <div class="card-header">
-        Sign In
+        @Localizer["label_sign_in"]
     </div>
     <div class="card-body">
-        <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
+        <EditForm Model="@Model" OnValidSubmit="HandleOnNext">
 
              <div class="form-group mb-3">
                 <div class="form-floating">
-                    <input placeholder="Email Address" @ref="inputEmailElement" type="email" class="form-control" id="email" required @bind-value="emailModel.Email">
-                    <label for="email">Email Address</label>
+                    <input placeholder="@Localizer["label_email_address"]" @ref="inputEmailElement" type="email" class="form-control" id="email" required @bind-value="emailModel.Email">
+                    <label for="email">@Localizer["label_email_address"]</label>
                 </div>
             </div>
             <!-- Wizard Buttons -->
@@ -22,18 +23,18 @@
             <div class="d-flex justify-content-between mb-3 wizard-buttons">
                 <div>
                     <button type="button" class="btn btn-link" @onclick="HandleSignupClick">
-                        Create Account
+                        @Localizer["label_create_account"]
                     </button>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-primary">Next</button>
+                    <button type="submit" class="btn btn-primary">@Localizer["label_next"]</button>
                 </div>
             </div>
         </EditForm>
         <!-- Separator -->
         <hr />
         <!-- Paragraph -->
-        <p class="text-center">or login with a social provider</p>
+        <p class="text-center">@Localizer["message_or_login_with_social_provider"]</p>
 
         <div class="d-flex justify-content-center social-buttons">
             @if (Model?.Manifest?.SocialIdps != null)
@@ -47,7 +48,7 @@
             }
             else
             {
-                <p>No social IDPs available.</p>
+                <p>@Localizer["message_no_socials_availabel"]</p>
             }
         </div>
     </div>
@@ -68,6 +69,7 @@
     {
         emailModel.Email = Model.Email;
         Model.Directive = Directive.Directive_Login;
+
     }
     [Parameter]
     public EventCallback<OIDCPage> SetStep { get; set; }
@@ -92,7 +94,7 @@
         if (wrapper == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("error with external login");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": siu:002");
             return;
         }
         var response = wrapper?.Response;
@@ -111,7 +113,7 @@
         await SetStep.InvokeAsync(OIDCPage.SignUpUserName);
     }
 
-    private async void HandleValidSubmit()
+    private async void HandleOnNext()
     {
         // Handle the form submission
         Model.Email = emailModel.Email;
@@ -127,14 +129,14 @@
         if (statusCode == HttpStatusCode.NotFound)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("user not found");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_user_not_found"]);
             return;
         }
 
         if (response == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Invalid username");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_invalid_username"]);
             return;
         }
 
@@ -156,7 +158,7 @@
 
             {
                 // show info message
-                await ShowInfoMessage.InvokeAsync("error with external login");
+                await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": siu:000");
                 return;
             }
             var startExternalLoginResponse = wrapper2.Response;
@@ -166,7 +168,7 @@
                 RedirectService.RedirectToUrl(startExternalLoginResponse.RedirectUri);
                 return;
             }
-            await ShowInfoMessage.InvokeAsync("error with external login");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": siu:001");
             return;
         }
         // Call SetStep with the desired step value

@@ -2,23 +2,24 @@
 @inject IRageApiService RageApiService
 @inject RedirectService RedirectService
 @inject IJSRuntime JS
+@inject IStringLocalizer<App> Localizer
 
-<div class="card">
+<div>
     <div class="card-header">
-        Create Account
+        @Localizer["label_create_account"]
     </div>
     <div class="card-body">
         <EditForm Model="@Model" OnValidSubmit="HandleValidSubmit">
             <div class="form-group mb-3">
                 <div class="form-floating">
-                    <input placeholder="Email Address" @ref="inputEmailElement" type="email" class="form-control" id="email" required @bind-value="Model.Email">
-                    <label for="email">Email Address</label>
+                    <input placeholder="@Localizer["label_email_address"]" @ref="inputEmailElement" type="email" class="form-control" id="email" required @bind-value="Model.Email">
+                    <label for="email">@Localizer["label_email_address"]</label>
                 </div>
             </div>
             <div class="form-group mb-3">
                 <div class="form-floating">
-                    <input placeholder="Password" type="password" class="form-control" id="password" required @bind-value="Model.Password">
-                        <label for="password">Password</label>
+                    <input placeholder="@Localizer["label_password"]" type="password" class="form-control" id="password" required @bind-value="Model.Password">
+                    <label for="password">@Localizer["label_password"]</label>
                 </div>
             </div>
 
@@ -26,18 +27,18 @@
             <!-- Wizard Buttons -->
             <div class="d-flex justify-content-end mb-3 wizard-buttons">
                 <button type="button" class="btn btn-secondary me-2" @onclick="HandleBackClick">
-                    Back
+                    @Localizer["label_back"]
                 </button>
                 <div>
-                    <button type="submit" class="btn btn-primary">Next</button>
+                    <button type="submit" class="btn btn-primary">@Localizer["label_next"]</button>
                 </div>
             </div>
         </EditForm>
         <!-- Separator -->
         <hr />
         <!-- Paragraph -->
-        <p class="text-center">or create an account with a social provider</p>
-
+        <p class="text-center">@Localizer["message_or_create_an_account_with_a_social_provider"]</p>
+        
         <div class="d-flex justify-content-center social-buttons">
             @if (Model?.Manifest?.SocialIdps != null)
             {
@@ -52,7 +53,7 @@
             }
             else
             {
-                <p>No social IDPs available.</p>
+                <p>@Localizer["message_no_socials_availabel"]</p>
             }
         </div>
     </div> 
@@ -71,11 +72,30 @@
 
 
 
-    private void HandleSocialLoginButtonClick(string slug)
+    private async Task HandleSocialLoginButtonClick(string slug)
 
     {
         // Handle the button click event here
-        Console.WriteLine($"Button clicked: {slug}");
+        Console.WriteLine($"HandleSocialLoginButtonClick: {slug}");
+        var request = new StartExternalLoginRequest
+            {
+                Slug = slug,
+                Directive = "signup"
+            };
+        var wrapper = await RageApiService.StartExternalLoginAsync(request);
+        if (wrapper == null)
+        {
+            // show info message
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": suu:001");
+            return;
+        }
+        var response = wrapper?.Response;
+
+        if (response != null)
+        {
+            Console.WriteLine($"Response: {response}");
+            RedirectService.RedirectToUrl(response.RedirectUri);
+        }
     }
     private async void HandleSigninClick()
     {
@@ -107,7 +127,7 @@
         if (wrapper == null)
         {
             // show info message
-            await ShowInfoMessage.InvokeAsync("Error signing up");
+            await ShowInfoMessage.InvokeAsync(Localizer["message_unknown_error"] + ": suu:000");
             return;
         }
         var statusCode = wrapper.StatusCode;
@@ -115,32 +135,43 @@
         switch (statusCode)
         {
             case HttpStatusCode.Found:
-                await ShowInfoMessage.InvokeAsync("User already exists");
+                await ShowInfoMessage.InvokeAsync(Localizer["message_user_already_exists"]);
                 await SetStep.InvokeAsync(OIDCPage.SigninUserName);
                 return;
             case HttpStatusCode.OK:
-                await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+
+                if (response.DirectiveEmailCodeChallenge != null)
+                {
+                    await SetStep.InvokeAsync(OIDCPage.VerifyCode);
+                }
+                else
+                {
+                    await SetStep.InvokeAsync(OIDCPage.SigninUserName);
+                }
+
                 return;
         }
        
         if (response != null)
         {
-
+            var message = Localizer["message_unknown_error"];
             switch (response?.ErrorReason)
             {
                 case SignupErrorReason.SignupErrorReason_NoError:
                     await SetStep.InvokeAsync(OIDCPage.SigninUserName);
                     return;
                 case SignupErrorReason.SignupErrorReason_InvalidPassword:
-                    await ShowInfoMessage.InvokeAsync("Invalid password.  Make it stronger");
+                    message = Localizer["message_invalid_password"];
+                    await ShowInfoMessage.InvokeAsync(message);
                     break;
 
                 case SignupErrorReason.SignupErrorReason_UserAlreadyExists:
-                    await ShowInfoMessage.InvokeAsync("User already exists");
+                    message = Localizer["message_user_already_exists"];
+                    await ShowInfoMessage.InvokeAsync(message);
                     await SetStep.InvokeAsync(OIDCPage.SigninUserName);
                     return;
                 default:
-                    await ShowInfoMessage.InvokeAsync("Error signing up");
+                    await ShowInfoMessage.InvokeAsync(message);
                     break;
             }
         }

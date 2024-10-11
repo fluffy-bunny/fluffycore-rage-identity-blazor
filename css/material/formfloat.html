@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Design Form Floating Example in Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@material/web/all.js';
+      import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+  
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-content">
+                <h1 class="md-typescale-display-medium">Sign In</h1>
+                <form>
+                    <md-outlined-text-field label="Email address" type="email" id="email"></md-outlined-text-field>
+                    <md-outlined-text-field label="Password" type="password" id="password"></md-outlined-text-field>
+                    <md-filled-button type="submit">Submit</md-filled-button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <style>
+      .container {
+        margin-top: 50px;
+      }
+      .card {
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    </style>
+</body>
+</html>
