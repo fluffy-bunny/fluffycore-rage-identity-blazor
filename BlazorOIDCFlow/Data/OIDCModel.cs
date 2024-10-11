@@ -80,9 +80,9 @@ namespace BlazorOIDCFlow.Data
 
         public string UserName { get; set; }
 
-        [JsonPropertyName("passkeyAvailable")]
+        [JsonPropertyName("passkeyAvailabel")]
 
-        public bool PasskeyAvailable { get; set; }
+        public bool PasskeyAvailabel { get; set; }
     }
     public class VerifyPasswordStrengthRequest
     {
@@ -282,6 +282,7 @@ namespace BlazorOIDCFlow.Data
     {
         PasswordResetErrorReason_NoError = 0,
         PasswordResetErrorReason_InvalidPassword = 1,
+        PasswordResetErrorReason_PasswordsDoNotMatch = 2,
     }
     public class PasswordResetFinishResponse  {
         [JsonPropertyName("directive")]
