@@ -14,7 +14,8 @@ namespace BlazorAccountManagement.Services
         }
 
         public async Task<string> GetAppSettingsAsync()
-        {
+        { 
+        /*
             try
             {
                 // First, try to get the settings from the API
@@ -43,7 +44,7 @@ namespace BlazorAccountManagement.Services
             {
                 Console.WriteLine($"Failed to fetch settings from API. Error: {ex.Message}. Falling back to local file.");
             }
-
+        */
             // If API request failed or returned invalid content, try the local file
             try
             {

@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace BlazorAccountManagement.Models
 {
+    public class EmptyResponse { }
     public class UserProfile
     {
         [JsonPropertyName("email")]

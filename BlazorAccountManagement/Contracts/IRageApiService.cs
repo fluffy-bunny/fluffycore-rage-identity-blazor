@@ -6,6 +6,8 @@ namespace BlazorAccountManagement.Contracts
 {
     public interface IRageApiService
     {
+        public Task<ResponseWrapper<EmptyResponse?>?> GetIsAuthorizedAsync();
+
         public Task<ResponseWrapper<LogoutResponse?>?> PostLogoutAsync(LogoutRequest request);
         public Task<ResponseWrapper<UserProfile?>?> GetUserProfileAsync();
         public Task<ResponseWrapper<UserIdentityInfo?>?> GetUserIdentityInfoAsync();

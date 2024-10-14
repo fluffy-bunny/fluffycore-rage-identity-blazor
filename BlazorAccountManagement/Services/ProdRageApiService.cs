@@ -1,6 +1,7 @@
 ﻿
 using BlazorAccountManagement.Contracts;
 using BlazorAccountManagement.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Net;
 using System.Text.Json;
@@ -11,21 +12,23 @@ namespace BlazorAccountManagement.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IJSRuntime _jsRuntime;
-        private readonly IConfiguration _configuration;
         private readonly string? _baseApiUrl;
+        private readonly NavigationManager _navigationManager;
+        private readonly AppSettings _appSettings;
 
-        public ProdRageApiService(IConfiguration configuration, HttpClient httpClient, IJSRuntime jsRuntime)
+        public ProdRageApiService(AppSettings appSettings, HttpClient httpClient, NavigationManager navigationManager, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
             _jsRuntime = jsRuntime;
-            _configuration = configuration;
-            _baseApiUrl = _configuration.GetValue<string>("BaseAPIUrl");
+            _appSettings = appSettings;
+            _navigationManager = navigationManager;
+            _baseApiUrl = appSettings.BaseApiUrl;
             if (!string.IsNullOrEmpty(_baseApiUrl))
             {
                 _httpClient.BaseAddress = new Uri(_baseApiUrl);
             }
         }
-        
+
         public async Task<ResponseWrapper<TResponse?>?> GetAsync<TResponse>(string path)   where TResponse : class
         {
             try
@@ -36,6 +39,12 @@ namespace BlazorAccountManagement.Services
                 if (wrappedResponse != null)
                 {
                     Console.WriteLine(JsonSerializer.Serialize(wrappedResponse));
+                    if (wrappedResponse.StatusCode ==  HttpStatusCode.Unauthorized)
+                    {
+                        Console.WriteLine($"Unauthorized access. Redirecting to home page { _appSettings.UnauthorizedRedirectUrl }.");
+                       _navigationManager.NavigateTo(_appSettings.UnauthorizedRedirectUrl);
+                      //  return null;
+                    }
                     return wrappedResponse;
                 }
                 else
@@ -61,6 +70,13 @@ namespace BlazorAccountManagement.Services
                 if (wrappedResponse != null)
                 {
                     Console.WriteLine(JsonSerializer.Serialize(wrappedResponse));
+                    if (wrappedResponse.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        Console.WriteLine($"Unauthorized access. Redirecting to home page {_appSettings.UnauthorizedRedirectUrl}.");
+                        //			redirectUrl := fmt.Sprintf("%s?returnUrl=%s", wellknown_echo.LoginPath, path)
+
+                        _navigationManager.NavigateTo(_appSettings.UnauthorizedRedirectUrl);
+                     }
                     return wrappedResponse;
                 }
                 else
@@ -75,6 +91,12 @@ namespace BlazorAccountManagement.Services
                 Console.Error.WriteLine($"Error: {ex.Message}");
                 return null;
             }
+        }
+        
+
+        public async Task<ResponseWrapper<EmptyResponse?>?> GetIsAuthorizedAsync()
+        {
+            return await GetAsync<EmptyResponse>("/api/is-authorized");
         }
         public async Task<ResponseWrapper<UserProfile?>?> GetUserProfileAsync()
         {

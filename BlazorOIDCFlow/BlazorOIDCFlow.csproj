@@ -10,6 +10,36 @@
   <PropertyGroup>
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\appsettings.json" />
+    <Content Remove="wwwroot\index.html" />
+    <Content Remove="wwwroot\sample-data\login-password-response.json" />
+    <Content Remove="wwwroot\sample-data\login-phase-one-mapped-response.json" />
+    <Content Remove="wwwroot\sample-data\login-phase-one-response.json" />
+    <Content Remove="wwwroot\sample-data\manifest.json" />
+    <Content Remove="wwwroot\sample-data\start-external-login-response.json" />
+    <Content Remove="wwwroot\sample-data\verify-code-response.json" />
+    <Content Remove="wwwroot\sample-data\verify-password-strength-response.json" />
+    <Content Remove="wwwroot\sample-data\verify-username-response.json" />
+    <Content Remove="wwwroot\sample-data\weather.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\index.html" />
+    <None Include="wwwroot\sample-data\login-password-response.json" />
+    <None Include="wwwroot\sample-data\login-phase-one-mapped-response.json" />
+    <None Include="wwwroot\sample-data\login-phase-one-response.json" />
+    <None Include="wwwroot\sample-data\manifest.json" />
+    <None Include="wwwroot\sample-data\start-external-login-response.json" />
+    <None Include="wwwroot\sample-data\verify-code-response.json" />
+    <None Include="wwwroot\sample-data\verify-password-strength-response.json" />
+    <None Include="wwwroot\sample-data\verify-username-response.json" />
+    <None Include="wwwroot\sample-data\weather.json" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10" PrivateAssets="all" />
@@ -22,9 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="wwwroot\css\app.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -26,6 +26,14 @@ namespace BlazorAccountManagement.Services
                 StatusCode = HttpStatusCode.OK
             };
         }
+        public async Task<ResponseWrapper<EmptyResponse?>?> GetIsAuthorizedAsync()
+        {
+            return new ResponseWrapper<EmptyResponse?>
+            {
+                Response = new EmptyResponse(),
+                StatusCode = HttpStatusCode.OK
+            };
+        }
 
         public async Task<ResponseWrapper<UserProfile?>?> GetUserProfileAsync()
         {

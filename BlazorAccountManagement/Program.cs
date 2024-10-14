@@ -28,6 +28,8 @@ var configService = new ConfigService(httpClient);
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var json = await configService.GetAppSettingsAsync();
+AppSettings appSettings = await System.Text.Json.JsonSerializer.DeserializeAsync<AppSettings>(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json)));
+builder.Services.AddSingleton(appSettings);
 
 var configuration = new ConfigurationBuilder()
     .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(json)))
