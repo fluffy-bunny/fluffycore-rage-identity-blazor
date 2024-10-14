@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    <BlazorWebAssemblyEnableIntegrityValidation>false</BlazorWebAssemblyEnableIntegrityValidation>
+
   </PropertyGroup>
   <PropertyGroup>
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
@@ -41,5 +43,9 @@
   <ItemGroup>
     <Folder Include="wwwroot\sample-data\" />
   </ItemGroup>
-
+  <Target Name="ExcludeIndexFromServiceWorkerAssets" BeforeTargets="GenerateServiceWorkerAssetsManifest">
+    <ItemGroup>
+      <ServiceWorkerAssetsManifest Remove="wwwroot\index.html" />
+    </ItemGroup>
+  </Target>
 </Project>

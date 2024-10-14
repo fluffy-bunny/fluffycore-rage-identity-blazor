@@ -5,6 +5,8 @@
     <Nullabel>enable</Nullabel>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    <BlazorWebAssemblyEnableIntegrityValidation>false</BlazorWebAssemblyEnableIntegrityValidation>
+
   </PropertyGroup>
 
   <PropertyGroup>
@@ -27,9 +29,11 @@
 
   <ItemGroup>
     <None Include="wwwroot\appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\index.html" />
+    <None Include="wwwroot\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\sample-data\login-password-response.json" />
     <None Include="wwwroot\sample-data\login-phase-one-mapped-response.json" />
     <None Include="wwwroot\sample-data\login-phase-one-response.json" />
@@ -56,5 +60,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
- 
+  <Target Name="ExcludeIndexFromServiceWorkerAssets" BeforeTargets="GenerateServiceWorkerAssetsManifest">
+    <ItemGroup>
+      <ServiceWorkerAssetsManifest Remove="wwwroot\index.html" />
+    </ItemGroup>
+  </Target>
 </Project>
