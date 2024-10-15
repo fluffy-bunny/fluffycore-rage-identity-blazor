@@ -68,6 +68,7 @@ jobs:
           cp -r ./BlazorOIDCFlow/publish/wwwroot ./cmd/httpserver/static/oidc-login-ui/wwwroot
           mv ./cmd/httpserver/static/oidc-login-ui/wwwroot/index.html ./cmd/httpserver/static/oidc-login-ui/wwwroot/index_template.html
           sed -i 's#<base href="/" />#<base href="/oidc-login-ui/" />#' ./cmd/httpserver/static/oidc-login-ui/wwwroot/index_template.html
+          sed -i 's/{version}/${{needs.pre_flight.outputs.new_tag}}/g' ./cmd/httpserver/static/oidc-login-ui/wwwroot/index_template.html
 
       - name: Build and Publish BlazorAccountManagement
         run: |
