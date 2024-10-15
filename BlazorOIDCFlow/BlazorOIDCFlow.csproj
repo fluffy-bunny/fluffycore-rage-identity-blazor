@@ -14,7 +14,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\apple-touch-icon-114x114.png" />
+    <Content Remove="wwwroot\apple-touch-icon-120x120.png" />
+    <Content Remove="wwwroot\apple-touch-icon-144x144.png" />
+    <Content Remove="wwwroot\apple-touch-icon-152x152.png" />
+    <Content Remove="wwwroot\apple-touch-icon-180x180.png" />
+    <Content Remove="wwwroot\apple-touch-icon-192x192.png" />
+    <Content Remove="wwwroot\apple-touch-icon-512x512.png" />
+    <Content Remove="wwwroot\apple-touch-icon-57x57.png" />
+    <Content Remove="wwwroot\apple-touch-icon-72x72.png" />
+    <Content Remove="wwwroot\apple-touch-icon-76x76.png" />
+    <Content Remove="wwwroot\apple-touch-icon.png" />
     <Content Remove="wwwroot\appsettings.json" />
+    <Content Remove="wwwroot\favicon.ico" />
     <Content Remove="wwwroot\index.html" />
     <Content Remove="wwwroot\sample-data\login-password-response.json" />
     <Content Remove="wwwroot\sample-data\login-phase-one-mapped-response.json" />
@@ -28,7 +40,43 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\apple-touch-icon-114x114.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-120x120.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-144x144.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-152x152.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-180x180.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-192x192.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-512x512.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-57x57.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-72x72.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon-76x76.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\apple-touch-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\favicon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\index.html">
@@ -60,9 +108,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <Target Name="ExcludeIndexFromServiceWorkerAssets" BeforeTargets="GenerateServiceWorkerAssetsManifest">
-    <ItemGroup>
-      <ServiceWorkerAssetsManifest Remove="wwwroot\index.html" />
-    </ItemGroup>
-  </Target>
+
 </Project>
