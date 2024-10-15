@@ -82,6 +82,7 @@ jobs:
           cp -r ./BlazorAccountManagement/publish/wwwroot ./cmd/httpserver/static/management/wwwroot
           mv ./cmd/httpserver/static/management/wwwroot/index.html ./cmd/httpserver/static/management/wwwroot/index_template.html
           sed -i 's#<base href="/" />#<base href="/management/" />#' ./cmd/httpserver/static/management/wwwroot/index_template.html
+          sed -i 's/{version}/${{needs.pre_flight.outputs.new_tag}}/g' ./cmd/httpserver/static/management/wwwroot/index_template.html
 
       - name: Build Go Server
         run: |
