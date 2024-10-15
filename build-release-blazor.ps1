@@ -1,42 +1,66 @@
+# Function to process a Blazor project
+function Process-BlazorProject {
+    param (
+        [string]$projectName,
+        [string]$destinationPath,
+        [string]$baseHref
+    )
 
-cd BlazorOIDCFlow
-dotnet publish -c Release -o ./publish
-cd ..
-# Delete existing wwwroot folder
-Remove-Item -Path ./cmd/httpserver/static/oidc-login-ui/wwwroot -Recurse -Force
+    Write-Host "Processing $projectName..."
 
-# Copy new wwwroot folder
-Copy-Item -Path ./BlazorOIDCFlow/publish/wwwroot -Destination ./cmd/httpserver/static/oidc-login-ui/wwwroot -Recurse
+    # Build and publish the Blazor project
+    Set-Location $projectName
+    dotnet publish -c Release -o ./publish
+    Set-Location ..
 
-# Rename index.html to index_template.html
-Rename-Item -Path ./cmd/httpserver/static/oidc-login-ui/wwwroot/index.html -NewName index_template.html
+    # Prepare the destination directory
+    $wwwrootPath = Join-Path $destinationPath "wwwroot"
+    if (Test-Path $wwwrootPath) {
+        Remove-Item $wwwrootPath -Recurse -Force
+    }
 
-# Modify base href in index_template.html
-$content = Get-Content -Path ./cmd/httpserver/static/oidc-login-ui/wwwroot/index_template.html -Raw
-$content = $content -replace '<base href="/" />', '<base href="/oidc-login-ui/" />'
-$content | Set-Content -Path ./cmd/httpserver/static/oidc-login-ui/wwwroot/index_template.html
+    # Copy the published files
+    Copy-Item -Path (Join-Path $projectName "publish\wwwroot") -Destination $wwwrootPath -Recurse
 
+    # Process the index.html file
+    $indexPath = Join-Path $wwwrootPath "index.html"
+    $templatePath = Join-Path $wwwrootPath "index_template.html"
+    Rename-Item -Path $indexPath -NewName "index_template.html"
 
-cd .\BlazorAccountManagement
-dotnet publish -c Release -o ./publish
-cd ..
+    # Modify the base href and add version
+    $content = Get-Content -Path $templatePath -Raw
+    $content = $content -replace '<base href="/" />', "<base href=`"$baseHref`" />"
+    $newGuid = [Guid]::NewGuid().ToString()
+    $content = $content -replace '{version}', $newGuid
+    $content | Set-Content -Path $templatePath
 
+    Write-Host "$projectName processed. New version GUID: $newGuid"
+}
 
-# Delete existing wwwroot folder
-Remove-Item -Path ./cmd/httpserver/static/management/wwwroot -Recurse -Force
+# Main script execution
+try {
+    # Process BlazorOIDCFlow
+    Process-BlazorProject -projectName "BlazorOIDCFlow" `
+        -destinationPath ".\cmd\httpserver\static\oidc-login-ui" `
+        -baseHref "/oidc-login-ui/"
 
-# Copy new wwwroot folder
-Copy-Item -Path ./BlazorAccountManagement/publish/wwwroot -Destination ./cmd/httpserver/static/management/wwwroot -Recurse
+    # Process BlazorAccountManagement
+    Process-BlazorProject -projectName "BlazorAccountManagement" `
+        -destinationPath ".\cmd\httpserver\static\management" `
+        -baseHref "/management/"
 
-# Rename index.html to index_template.html
-Rename-Item -Path ./cmd/httpserver/static/management/wwwroot/index.html -NewName index_template.html
+    # Build Go project
+    Write-Host "Building Go project..."
+    Set-Location .\cmd\httpserver
+    go build .
+    Set-Location ..\..
 
-# Modify base href in index_template.html
-$content = Get-Content -Path ./cmd/httpserver/static/management/wwwroot/index_template.html -Raw
-$content = $content -replace '<base href="/" />', '<base href="/management/" />'
-$content | Set-Content -Path ./cmd/httpserver/static/management/wwwroot/index_template.html
-
-cd .\cmd/httpserver/
-go build .
-cd ..
-cd ..
+    Write-Host "All operations completed successfully."
+}
+catch {
+    Write-Host "An error occurred: $_" -ForegroundColor Red
+}
+finally {
+    # Ensure we're back in the original directory
+    Set-Location $PSScriptRoot
+}
