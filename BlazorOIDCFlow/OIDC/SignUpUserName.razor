@@ -45,10 +45,12 @@
                 @foreach (var idp in Model.Manifest.SocialIdps)
 
                 {
-                    <button type="button" class="btn btn-info d-flex align-items-center justify-content-center" 
-                    @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
-                        <img src="@idp.Slug-logo.png" alt="@idp.Name" class="social-logo me-2">@idp.Name
+                    <button type="button" class="btn btn-info d-flex align-items-center justify-content-center m-1 social-btn" @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
+                        <img src="@idp.Slug-logo.png" alt="@idp.Name" class="social-logo">
+                        <span class="social-name d-none d-sm-inline ms-2">@idp.Name</span>
                     </button>
+
+ 
                 }
             }
             else
