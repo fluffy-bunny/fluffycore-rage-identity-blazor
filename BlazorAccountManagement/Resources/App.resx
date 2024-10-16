@@ -210,4 +210,7 @@
   <data name="message_error_unknown_template" xml:space="preserve">
     <value>Unknown error: {0}</value>
   </data>
+  <data name="label_home" xml:space="preserve">
+    <value>Home</value>
+  </data>
 </root>
