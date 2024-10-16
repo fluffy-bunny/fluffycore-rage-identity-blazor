@@ -4,6 +4,7 @@ on:
   push:
     branches: ["**"]
     paths-ignore:
+      - "**.ps1"
       - "**.md"
       - "docs/**"
       - ".vscode/**"
@@ -11,6 +12,7 @@ on:
       - ".env"
       - "docker-compose.yml"
       - "docker/**"
+      - "cmd/httpserver/static/**"
   pull_request:
     paths-ignore:
       - "**.md"

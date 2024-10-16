@@ -8,6 +8,9 @@ function Process-BlazorProject {
 
     Write-Host "Processing $projectName..."
 
+    # Ensure the destination directory exists
+    New-Item -ItemType Directory -Force -Path $destinationPath | Out-Null
+
     # Build and publish the Blazor project
     Set-Location $projectName
     dotnet publish -c Release -o ./publish
