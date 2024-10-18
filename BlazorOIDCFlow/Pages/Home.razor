@@ -2,16 +2,59 @@
 @using System.Text.Json.Serialization
 @using BlazorOIDCFlow.Contracts
 @using Microsoft.Extensions.Localization
+@using System.Net
 @inject HttpClient Http
 @inject IRageApiService RageApiService
 @inject IStringLocalizer<App> Localizer
+@inject RedirectService RedirectService
 
-<CascadingValue Value="Model">
-    <OIDCContainer />
-</CascadingValue>
+@if (!isInitialized)
+{
+    <div class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    <CascadingValue Value="Model">
+        <OIDCContainer />
+    </CascadingValue>
+}
+
 
 @code {
+    private bool isInitialized = false;
+
     public OIDCModel Model { get; set; } = new OIDCModel();
 
-    
+    protected override async Task OnInitializedAsync()
+    {
+        var validSession = false;
+        try
+        {
+            var wrappedIsValidOIDCSessionResponse = await RageApiService.GetIsValidOIDCSessionAsync();
+            if (wrappedIsValidOIDCSessionResponse != null)
+            {
+                var response = wrappedIsValidOIDCSessionResponse.Response;
+                var statusCode = wrappedIsValidOIDCSessionResponse.StatusCode;
+                if (statusCode == HttpStatusCode.OK && response.Valid)
+                {
+                    validSession = true;
+                }
+            }
+        }
+        finally
+        {
+            if (!validSession)
+            {
+                RedirectService.RedirectToUrl("/");
+            }else{
+                isInitialized = true;
+                StateHasChanged();
+            }
+        }
+
+    }
 }

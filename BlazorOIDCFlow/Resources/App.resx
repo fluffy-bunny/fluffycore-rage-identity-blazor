@@ -204,4 +204,16 @@
   <data name="message_invalid_username_or_password" xml:space="preserve">
     <value>Invalid username or password</value>
   </data>
+  <data name="message_current_logged_in_user_template" xml:space="preserve">
+    <value>The user, {0}, is currently logged in!</value>
+  </data>
+  <data name="label_continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="label_user_another_account" xml:space="preserve">
+    <value>Use another account</value>
+  </data>
+  <data name="label_choose_an_account" xml:space="preserve">
+    <value>Choose an account</value>
+  </data>
 </root>

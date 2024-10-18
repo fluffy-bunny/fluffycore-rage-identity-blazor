@@ -4,6 +4,10 @@ namespace BlazorOIDCFlow.Contracts
 {
     public interface IRageApiService
     {
+        public Task<ResponseWrapper<ValidOIDCSessionResponse?>?> GetIsValidOIDCSessionAsync();
+
+        public Task<ResponseWrapper<UserProfile?>?> GetUserProfileAsync();
+        public Task<ResponseWrapper<LoginCurrentUserResponse?>?> GetLoginCurrentUserAsync();
         public Task<ResponseWrapper<Manifest?>?> GetManifestAsync();
         public Task<ResponseWrapper<Manifest?>?> StartOverAsync();
 

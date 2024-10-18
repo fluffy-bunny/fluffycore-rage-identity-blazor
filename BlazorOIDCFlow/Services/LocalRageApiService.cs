@@ -16,6 +16,23 @@ namespace BlazorOIDCFlow.Services
             _configuration = configuration;
             _baseApiUrl = _configuration.GetValue<string>("BaseAPIUrl");
         }
+
+        public async Task<ResponseWrapper<ValidOIDCSessionResponse>> GetIsValidOIDCSessionAsync()
+        {
+            return new ResponseWrapper<ValidOIDCSessionResponse?>
+            {
+                Response = new ValidOIDCSessionResponse{
+                    Valid = true
+                },
+                StatusCode = HttpStatusCode.OK
+            };
+        }
+
+        public async Task<ResponseWrapper<LoginCurrentUserResponse>> GetLoginCurrentUserAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ResponseWrapper<Manifest?>?> GetManifestAsync()
         {
             var respone = await _httpClient.GetFromJsonAsync<Manifest?>("sample-data/manifest.json");
@@ -23,6 +40,14 @@ namespace BlazorOIDCFlow.Services
             {
                 Response = respone,
                 StatusCode = HttpStatusCode.OK
+            };
+        }
+
+        public async Task<ResponseWrapper<UserProfile>> GetUserProfileAsync()
+        {
+            return new ResponseWrapper<UserProfile?>
+            {
+                StatusCode = HttpStatusCode.Unauthorized
             };
         }
 

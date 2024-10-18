@@ -184,6 +184,20 @@ namespace BlazorOIDCFlow.Data
         [JsonPropertyName("directiveEmailCodeChallenge")]
         public DirectiveEmailCodeChallenge? DirectiveEmailCodeChallenge { get; set; }
     }
+    public class LoginCurrentUserResponse
+    {
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [JsonPropertyName("directive")]
+        public string Directive { get; set; }
+
+        [JsonPropertyName("directiveRedirect")]
+        public DirectiveRedirect? DirectiveRedirect { get; set; }
+
+        [JsonPropertyName("directiveEmailCodeChallenge")]
+        public DirectiveEmailCodeChallenge? DirectiveEmailCodeChallenge { get; set; }
+    }
     public class DirectiveRedirect
     {
         [JsonPropertyName("redirectUri")]
@@ -290,5 +304,26 @@ namespace BlazorOIDCFlow.Data
 
         [JsonPropertyName("errorReason")]
         public PasswordResetErrorReason ErrorReason { get; set; } = PasswordResetErrorReason.PasswordResetErrorReason_NoError;
+    }
+    public class UserProfile
+    {
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [Required]
+        [JsonPropertyName("givenName")]
+        public string GivenName { get; set; }
+
+        [Required]
+        [JsonPropertyName("familyName")]
+        public string FamilyName { get; set; }
+
+        [JsonPropertyName("phoneNumber")]
+        public string PhoneNumber { get; set; }
+    }
+    public class ValidOIDCSessionResponse
+    {
+        [JsonPropertyName("valid")]
+        public bool Valid { get; set; }
     }
 }

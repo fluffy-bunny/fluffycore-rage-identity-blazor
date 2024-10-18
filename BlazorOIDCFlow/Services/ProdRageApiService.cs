@@ -131,5 +131,21 @@ namespace BlazorOIDCFlow.Services
         {
             return await GetAsync<Manifest>("/api/start-over");
         }
+        public async Task<ResponseWrapper<UserProfile?>?> GetUserProfileAsync()
+        {
+            return await GetAsync<UserProfile>("/api/user-profile");
+        }
+
+        public async Task<ResponseWrapper<LoginCurrentUserResponse>> GetLoginCurrentUserAsync()
+        {
+            return await GetAsync<LoginCurrentUserResponse>("/api/login-current-user");
+        }
+
+        public async Task<ResponseWrapper<ValidOIDCSessionResponse>> GetIsValidOIDCSessionAsync()
+        {
+            return await GetAsync<ValidOIDCSessionResponse>("/api/is-valid-oidc-session");
+        }
     }
 }
+
+

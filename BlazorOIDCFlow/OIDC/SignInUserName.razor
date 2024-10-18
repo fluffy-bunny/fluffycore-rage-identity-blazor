@@ -5,58 +5,116 @@
 @inject IJSRuntime JS
 @inject IStringLocalizer<App> Localizer
 
-<div>
-    <div class="card-header">
-        @Localizer["label_sign_in"]
-    </div>
-    <div class="card-body">
-        <EditForm Model="@Model" OnValidSubmit="HandleOnNext">
-
-             <div class="form-group mb-3">
-                <div class="form-floating">
-                    <input placeholder="@Localizer["label_email_address"]" @ref="inputEmailElement" type="email" class="form-control" id="email" required @bind-value="emailModel.Email">
-                    <label for="email">@Localizer["label_email_address"]</label>
-                </div>
-            </div>
-            <!-- Wizard Buttons -->
-
-            <div class="d-flex justify-content-between mb-3 wizard-buttons">
-                <div>
-                    <button type="button" class="btn btn-link" @onclick="HandleSignupClick">
-                        @Localizer["label_create_account"]
-                    </button>
-                </div>
-                <div>
-                    <button type="submit" class="btn btn-primary">@Localizer["label_next"]</button>
-                </div>
-            </div>
-        </EditForm>
-        <!-- Separator -->
-        <hr />
-        <!-- Paragraph -->
-        <p class="text-center">@Localizer["message_or_login_with_social_provider"]</p>
-
-        <div class="d-flex justify-content-center social-buttons">
-            @if (Model?.Manifest?.SocialIdps != null)
-            {
-                @foreach (var idp in Model.Manifest.SocialIdps)
-                {
-                    <button type="button" class="btn btn-info d-flex align-items-center justify-content-center m-1 social-btn" @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
-                        <img src="@idp.Slug-logo.png" alt="@idp.Name" class="social-logo">
-                        <span class="social-name d-none d-sm-inline ms-2">@idp.Name</span>
-                    </button>
-                }
-            }
-            else
-            {
-                <p>@Localizer["message_no_socials_availabel"]</p>
-            }
+@if (!isInitialized)
+{
+    <div class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
-    
-</div>
+}
+else
+{
+    if (CurrentLoggedInUser != null)
+    {
+        <div>
+            <div class="card-header">
+                @Localizer["label_choose_an_account"]
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item p-0">
+                        <button class="list-group-item-action d-flex align-items-center p-3 border-0 w-100" @onclick="HandleContinueWithCurrentUser">
+                            <div class="flex-grow-1 text-start">
+                                <strong>
+                                    @if (!string.IsNullOrEmpty(CurrentLoggedInUser.GivenName) && !string.IsNullOrEmpty(CurrentLoggedInUser.FamilyName))
+                                    {
+                                        @($"{CurrentLoggedInUser.GivenName} {CurrentLoggedInUser.FamilyName}")
+                                    }
+                                    else if (!string.IsNullOrEmpty(CurrentLoggedInUser.FamilyName))
+                                    {
+                                        @CurrentLoggedInUser.FamilyName
+                                    }
+                                    else
+                                    {
+                                        @CurrentLoggedInUser.Email
+                                    }
+                                </strong>
+                                <br />
+                                <small class="text-muted">@CurrentLoggedInUser.Email</small>
+                            </div>
+                        </button>
+                    </li>
+                    <li class="list-group-item p-0">
+                        <button class="list-group-item-action d-flex align-items-center p-3 border-0 w-100" @onclick="HandleSignInWithDifferentUser">
+                            <div class="flex-grow-1 text-start">
+                                <strong>@Localizer["label_user_another_account"]</strong>
+                            </div>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+    else
+    {
+  
+        <div>
+            <div class="card-header">
+                @Localizer["label_sign_in"]
+            </div>
+            <div class="card-body">
+                <EditForm Model="@Model" OnValidSubmit="HandleOnNext">
+
+                     <div class="form-group mb-3">
+                        <div class="form-floating">
+                            <input placeholder="@Localizer["label_email_address"]" @ref="inputEmailElement" type="email" class="form-control" id="email" required @bind-value="emailModel.Email">
+                            <label for="email">@Localizer["label_email_address"]</label>
+                        </div>
+                    </div>
+                    <!-- Wizard Buttons -->
+
+                    <div class="d-flex justify-content-between mb-3 wizard-buttons">
+                        <div>
+                            <button type="button" class="btn btn-link" @onclick="HandleSignupClick">
+                                @Localizer["label_create_account"]
+                            </button>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">@Localizer["label_next"]</button>
+                        </div>
+                    </div>
+                </EditForm>
+                <!-- Separator -->
+                <hr />
+                <!-- Paragraph -->
+                <p class="text-center">@Localizer["message_or_login_with_social_provider"]</p>
+
+                <div class="d-flex justify-content-center social-buttons">
+                    @if (Model?.Manifest?.SocialIdps != null)
+                    {
+                        @foreach (var idp in Model.Manifest.SocialIdps)
+                        {
+                            <button type="button" class="btn btn-info d-flex align-items-center justify-content-center m-1 social-btn" @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
+                                <img src="@idp.Slug-logo.png" alt="@idp.Name" class="social-logo">
+                                <span class="social-name d-none d-sm-inline ms-2">@idp.Name</span>
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <p>@Localizer["message_no_socials_availabel"]</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
 
 @code {
+    private bool isInitialized = false;
+    private bool showLoginToCurrentUserPage = false;
+    private UserProfile CurrentLoggedInUser = null;
     private ElementReference inputEmailElement;
 
     public class EmailModel
@@ -82,6 +140,50 @@
     [CascadingParameter]
     public OIDCModel Model { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var wrappedResponseUserProfile = await RageApiService.GetUserProfileAsync();
+            if (wrappedResponseUserProfile != null)
+            {
+                var statusCode = wrappedResponseUserProfile.StatusCode;
+                if (statusCode == HttpStatusCode.OK)
+                {
+                    // show the login to current user page.
+                    CurrentLoggedInUser = wrappedResponseUserProfile.Response;
+                }
+            }
+        }
+        finally
+        {
+            isInitialized = true;
+            StateHasChanged();
+        }
+
+    }
+    private async void HandleContinueWithCurrentUser()
+    {
+        var wrappedResponseLoginCurrentUser = await RageApiService.GetLoginCurrentUserAsync();
+        if (wrappedResponseLoginCurrentUser != null)
+        {
+            var response = wrappedResponseLoginCurrentUser.Response;
+
+            if (response.DirectiveRedirect != null)
+            {
+                RedirectService.RedirectToUrl(response.DirectiveRedirect.RedirectURI);
+                return;
+            }
+        }
+        CurrentLoggedInUser = null;
+        StateHasChanged();
+    
+    }
+    private async void HandleSignInWithDifferentUser()
+    {
+        CurrentLoggedInUser = null;
+        StateHasChanged();
+    }
     private async Task HandleSocialLoginButtonClick(string slug)
     {
         // Handle the button click event here
@@ -178,9 +280,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && CurrentLoggedInUser != null)
         {
-            await JS.InvokeVoidAsync("setFocus", inputEmailElement);
+           await JS.InvokeVoidAsync("setFocus", inputEmailElement);
         }
     }
 }
