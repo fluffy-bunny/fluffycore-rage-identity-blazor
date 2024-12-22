@@ -31,7 +31,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var validSession = false;
+        var validSession = true;
         try
         {
             var wrappedIsValidOIDCSessionResponse = await RageApiService.GetIsValidOIDCSessionAsync();

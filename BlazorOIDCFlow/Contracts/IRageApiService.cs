@@ -4,6 +4,10 @@ namespace BlazorOIDCFlow.Contracts
 {
     public interface IRageApiService
     {
+        public Task StoreLoginRecord(LoginRecord request);
+        public  Task<List<LoginRecord>> FetchLoginRecordsAsync();
+
+
         public Task<ResponseWrapper<ValidOIDCSessionResponse?>?> GetIsValidOIDCSessionAsync();
 
         public Task<ResponseWrapper<UserProfile?>?> GetUserProfileAsync();

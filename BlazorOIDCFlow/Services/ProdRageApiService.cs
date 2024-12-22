@@ -75,6 +75,24 @@ namespace BlazorOIDCFlow.Services
                 return null;
             }
         }
+
+        public async Task StoreLoginRecord(LoginRecord request)
+        {
+            try
+            {
+                await _jsRuntime.InvokeVoidAsync("storeLoginRecord", request);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error: {ex.Message}");
+            }
+        }
+        public async Task<List<LoginRecord>> FetchLoginRecordsAsync()
+        {
+            var records = await _jsRuntime.InvokeAsync<List<LoginRecord>>("fetchLoginRecords");
+            return records ?? new List<LoginRecord>();
+        }
+
         public async Task<ResponseWrapper<Manifest?>?> GetManifestAsync()
         {
             return await GetAsync<Manifest>("/api/manifest");

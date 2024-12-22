@@ -40,6 +40,11 @@ namespace BlazorOIDCFlow.Data
 
         public OIDCPage InitialPage { get; set; } = OIDCPage.SigninUserName;
     }
+    public class LoginRecord
+    {
+        public string FullName { get; set; }
+        public string Email { get; set; }
+    }
     public class Manifest
     {
         // json is social_idps

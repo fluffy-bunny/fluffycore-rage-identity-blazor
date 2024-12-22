@@ -67,7 +67,7 @@ window.setFocus = (element) => {
     element.focus();
 };
 // Function to get the list of last used identities
-function getLastUsedIdentities() {
+function fetchLoginRecords() {
     const identities = document.cookie
         .split('; ')
         .find(row => row.startsWith('lastUsedIdentities='));
@@ -75,15 +75,19 @@ function getLastUsedIdentities() {
     return identities ? JSON.parse(decodeURIComponent(identities.split('=')[1])) : [];
 }
 
-// Function to add a new identity to the list
-function addIdentity(identity) {
-    let identities = getLastUsedIdentities();
 
-    // Remove the identity if it already exists (comparing by email)
-    identities = identities.filter(id => id.email !== identity.email);
+// Function to store login record
+function storeLoginRecord(identity) {
+    let identities = fetchLoginRecords();
+
+    // Convert the new identity's email to lowercase
+    const newEmail = identity.email.toLowerCase();
+
+    // Remove the identity if it already exists (comparing by email in lowercase)
+    identities = identities.filter(id => id.email.toLowerCase() !== newEmail);
 
     // Add the new identity to the beginning of the list
-    identities.unshift(identity);
+    identities.unshift({ ...identity, email: newEmail });
 
     // Limit the list to 10 entries
     identities = identities.slice(0, 10);
@@ -94,7 +98,7 @@ function addIdentity(identity) {
 
 // Function to display the last used identities
 function displayLastUsedIdentities() {
-    const identities = getLastUsedIdentities();
+    const identities = fetchLoginRecords();
     console.log('Last used identities:', identities);
     // You can implement your own UI to display these identities
 }
@@ -105,6 +109,6 @@ const newIdentity = {
     email: "user@example.com",
     fullName: "User Doe"
 };
-addIdentity(newIdentity);
+storeLoginRecord(newIdentity);
 displayLastUsedIdentities();
 */

@@ -1,5 +1,6 @@
 ﻿using BlazorOIDCFlow.Contracts;
 using BlazorOIDCFlow.Data;
+using Microsoft.JSInterop;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -10,12 +11,33 @@ namespace BlazorOIDCFlow.Services
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly string? _baseApiUrl;
-        public LocalRageApiService(IConfiguration configuration, HttpClient httpClient)
+        private readonly IJSRuntime _jsRuntime;
+
+        public LocalRageApiService(IConfiguration configuration, HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
+            _jsRuntime = jsRuntime;
             _configuration = configuration;
             _baseApiUrl = _configuration.GetValue<string>("BaseAPIUrl");
         }
+
+        public async Task StoreLoginRecord(LoginRecord request)
+        {
+            try
+            {
+                await _jsRuntime.InvokeVoidAsync("storeLoginRecord", request);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error: {ex.Message}");
+            }
+        }
+        public async Task<List<LoginRecord>> FetchLoginRecordsAsync()
+        {
+            var records = await _jsRuntime.InvokeAsync<List<LoginRecord>>("fetchLoginRecords");
+            return records ?? new List<LoginRecord>();
+        }
+
 
         public async Task<ResponseWrapper<ValidOIDCSessionResponse>> GetIsValidOIDCSessionAsync()
         {
