@@ -5,6 +5,8 @@
 @inject RedirectService RedirectService
 @inject AppData AppData
 @inject AppSettings AppSettings
+@using BytexDigital.Blazor.Components.CookieConsent;
+
 
 @if (!isInitialized)
 {
@@ -35,13 +37,47 @@ else
             <article class="content px-4">
                 @Body
             </article>
+            <!-- Footer -->
+            <footer class="footer mt-auto py-3 bg-light">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <ul class="list-inline mb-0 text-center">
+                                <li class="list-inline-item">
+                                    <a href="@AppSettings.PrivacyPolicyUrl" class="text-muted text-decoration-none">@Localizer["privacy_policy"]</a>
+                                </li>
+                                <li class="list-inline-item">•</li>
+                                <li class="list-inline-item">
+                                    <a href="" @onclick="HandleCookiePreference" class="text-muted text-decoration-none">@Localizer["cookie_preferences"]</a>
+                                </li>
+                                <li class="list-inline-item">•</li>
+                                <li class="list-inline-item">
+                                    <span class="text-muted">&copy; 2025 @AppSettings.AppName. @Localizer["all_rights_reserved"].</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </main>
+
     </div>
+
 }
 
 @code {
+    [Inject]
+    protected CookieConsentService CookieConsentService { get; set; } = null!;
+
     private bool isInitialized = false;
 
+
+    private async Task HandleCookiePreference()
+    {
+        Console.WriteLine("HandleLogoutClick button clicked");
+        await CookieConsentService.ShowConsentModalAsync(false);
+
+    }
     private async Task HandleLogoutClick()
     {
         Console.WriteLine("HandleLogoutClick button clicked");

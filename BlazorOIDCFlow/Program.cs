@@ -2,15 +2,12 @@ using BlazorAccountManagement.Services;
 using BlazorOIDCFlow;
 using BlazorOIDCFlow.Contracts;
 using BlazorOIDCFlow.Services;
+using common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Localization;
-using System;
 using System.Globalization;
-using System.Net;
-using System.Text;
 
 
 
@@ -50,7 +47,8 @@ else
     builder.Services.AddScoped<IRageApiService, LocalRageApiService>();
 }
 builder.Services.AddScoped<RedirectService>();
- 
+builder.Services.AddCommonCookieConsent(appSettings.PrivacyPolicyUrl);
+
 var host = builder.Build();
 // Set the culture
 var supportedCultures = new[] { new CultureInfo("en") };

@@ -213,4 +213,19 @@
   <data name="label_home" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="all_rights_reserved" xml:space="preserve">
+    <value>all rights reserved</value>
+  </data>
+  <data name="cookie_preferences" xml:space="preserve">
+    <value>Cookie Preferences</value>
+  </data>
+  <data name="privacy_policy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="label_get_started" xml:space="preserve">
+    <value>Get Started</value>
+  </data>
+  <data name="label_learn_more" xml:space="preserve">
+    <value>Learn More</value>
+  </data>
 </root>

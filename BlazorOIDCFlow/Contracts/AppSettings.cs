@@ -4,5 +4,6 @@
     {
         public string ApplicationEnvironment { get; set; }
         public string BaseApiUrl { get; set; }
+        public string PrivacyPolicyUrl { get; set; }
     }
 }
