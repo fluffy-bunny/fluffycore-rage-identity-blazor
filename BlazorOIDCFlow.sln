@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorOIDCFlow", "BlazorOID
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorAccountManagement", "BlazorAccountManagement\BlazorAccountManagement.csproj", "{58CA8883-B53C-4BB9-A833-FD753F273710}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common", "common\common.csproj", "{2C4028D1-B231-459E-9E86-57E29ABB03A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{58CA8883-B53C-4BB9-A833-FD753F273710}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58CA8883-B53C-4BB9-A833-FD753F273710}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58CA8883-B53C-4BB9-A833-FD753F273710}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C4028D1-B231-459E-9E86-57E29ABB03A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4028D1-B231-459E-9E86-57E29ABB03A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4028D1-B231-459E-9E86-57E29ABB03A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4028D1-B231-459E-9E86-57E29ABB03A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

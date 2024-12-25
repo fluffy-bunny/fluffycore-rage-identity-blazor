@@ -93,6 +93,7 @@
     <None Include="wwwroot\sample-data\weather.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
@@ -111,6 +112,10 @@
 
   <ItemGroup>
     <Folder Include="Pages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\common\common.csproj" />
   </ItemGroup>
 
 </Project>

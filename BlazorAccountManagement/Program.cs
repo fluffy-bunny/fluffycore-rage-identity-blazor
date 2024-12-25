@@ -1,11 +1,11 @@
 using BlazorAccountManagement;
 using BlazorAccountManagement.Contracts;
 using BlazorAccountManagement.Services;
+using common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Localization;
 using System.Globalization;
 using System.Text;
 
@@ -36,7 +36,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 var applicationEnvironment = configuration.GetValue<string>("ApplicationEnvironment");
- 
+
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 if (applicationEnvironment == "Production")
@@ -49,6 +49,9 @@ else
 }
 builder.Services.AddScoped<RedirectService>();
 builder.Services.AddSingleton<AppData>();
+
+
+builder.Services.AddCommonCookieConsent(appSettings.PrivacyPolicyUrl);
 
 var host = builder.Build();
 // Set the culture
@@ -63,3 +66,5 @@ var localizationOptions = new RequestLocalizationOptions
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en");
 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
 await host.RunAsync();
+
+

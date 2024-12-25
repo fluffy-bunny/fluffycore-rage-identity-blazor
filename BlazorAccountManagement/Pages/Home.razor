@@ -7,7 +7,38 @@
 @inject AppData AppData
 @inject AppSettings AppSettings
 
-<PageTitle>@AppSettings.AppName</PageTitle>
+ <PageTitle>@(AppSettings?.AppName ?? string.Empty)</PageTitle>
 
-<h1>@AppSettings.AppName</h1>
+<!-- Hero Section -->
+<div class="px-4 py-5 my-5 text-center">
+    @if (!string.IsNullOrEmpty(AppSettings?.HomePageSettings?.ImageUrl))
+    {
+        <img class="d-block mx-auto mb-4" src="@(AppSettings?.HomePageSettings?.ImageUrl ?? string.Empty)" alt="Logo">
+    }
+    <h1 class="display-5 fw-bold text-body-emphasis">@(AppSettings?.HomePageSettings?.Title ?? string.Empty)</h1>
+    <div class="col-lg-6 mx-auto">
+       
+        <p class="lead mb-4">
+             @(AppSettings?.HomePageSettings?.Body ?? string.Empty)
+         </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            @if (!string.IsNullOrEmpty(AppSettings?.HomePageSettings?.GetSartedUrl))
+            {
+                <a href="@(AppSettings?.HomePageSettings?.GetSartedUrl)" class="btn btn-primary btn-lg px-4 gap-3">@Localizer["label_get_started"]</a>
 
+            }
+            @if (!string.IsNullOrEmpty(AppSettings?.HomePageSettings?.LearnMoreUrl))
+            {
+                <a href="@(AppSettings?.HomePageSettings?.LearnMoreUrl)" class="btn btn-outline-secondary btn-lg px-4 gap-3">@Localizer["label_learn_more"]</a>
+ 
+            }
+            
+        </div>
+    </div>
+</div>
+
+
+@code {
+  
+   
+}
