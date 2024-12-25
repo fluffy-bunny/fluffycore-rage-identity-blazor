@@ -47,7 +47,7 @@ else
     builder.Services.AddScoped<IRageApiService, LocalRageApiService>();
 }
 builder.Services.AddScoped<RedirectService>();
-builder.Services.AddCommonCookieConsent();
+builder.Services.AddCommonCookieConsent(appSettings.PrivacyPolicyUrl);
 
 var host = builder.Build();
 // Set the culture

@@ -51,7 +51,7 @@ builder.Services.AddScoped<RedirectService>();
 builder.Services.AddSingleton<AppData>();
 
 
-builder.Services.AddCommonCookieConsent();
+builder.Services.AddCommonCookieConsent(appSettings.PrivacyPolicyUrl);
 
 var host = builder.Build();
 // Set the culture
