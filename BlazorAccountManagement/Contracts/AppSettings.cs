@@ -15,6 +15,7 @@
         public string AppName { get; set; }
         public string UnauthorizedRedirectUrl { get; set; }
         public string PrivacyPolicyUrl { get; set; }
+        public string CookiePolicyUrl { get; set; }
         public HomePageSettings HomePageSettings { get; set; }
 
 
