@@ -33,6 +33,8 @@ var applicationEnvironment = appSettings.ApplicationEnvironment;
 
 Console.WriteLine($"Application Environment: {applicationEnvironment}");
 Console.WriteLine($"Base API URL: {appSettings.BaseApiUrl}");
+Console.WriteLine($"CookiePolicyUrl: {appSettings.CookiePolicyUrl}");
+Console.WriteLine($"PrivacyPolicyUrl: {appSettings.PrivacyPolicyUrl}");
 
 
 
@@ -47,7 +49,7 @@ else
     builder.Services.AddScoped<IRageApiService, LocalRageApiService>();
 }
 builder.Services.AddScoped<RedirectService>();
-builder.Services.AddCommonCookieConsent(appSettings.PrivacyPolicyUrl);
+builder.Services.AddCommonCookieConsent(appSettings.CookiePolicyUrl);
 
 var host = builder.Build();
 // Set the culture
