@@ -4,7 +4,7 @@
 @if (!isInitialized)
 {
     <p>@Localizer["Loading"]</p>
-    
+
 }
 else
 {
@@ -60,11 +60,13 @@ else
         var wrappedResponse = await RageApiService.GetManifestAsync();
         var manifest = wrappedResponse?.Response;
         Model.Manifest = manifest;
-
-        foreach (var socialIdp in Model.Manifest.SocialIdps)
+        @if (Model?.Manifest?.SocialIdps != null && Model.Manifest.SocialIdps.Count > 0)
         {
-            var socialName = Localizer[socialIdp.Slug];
-            socialIdp.Name = socialName;
+            foreach (var socialIdp in Model.Manifest.SocialIdps)
+            {
+                var socialName = Localizer[socialIdp.Slug];
+                socialIdp.Name = socialName;
+            }
         }
         if (manifest?.LandingPage != null)
         {
