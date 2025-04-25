@@ -51,6 +51,9 @@ namespace BlazorOIDCFlow.Data
         [JsonPropertyName("development_mode")]
         public bool DevelopmentMode { get; set; } = false;
 
+        [JsonPropertyName("disable_local_account_creation")]
+        public bool DisableLocalAccountCreation { get; set; } = false;
+
         [JsonPropertyName("landing_page")]
         public LandingPage? LandingPage { get; set; }
     }
