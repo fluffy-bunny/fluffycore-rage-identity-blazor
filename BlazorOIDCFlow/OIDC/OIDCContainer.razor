@@ -4,7 +4,7 @@
 @if (!isInitialized)
 {
     <p>@Localizer["Loading"]</p>
-    
+
 }
 else
 {
@@ -60,8 +60,7 @@ else
         var wrappedResponse = await RageApiService.GetManifestAsync();
         var manifest = wrappedResponse?.Response;
         Model.Manifest = manifest;
-
-        if (Model.Manifest.SocialIdps != null && Model.Manifest.SocialIdps.Count > 0)
+        @if (Model?.Manifest?.SocialIdps != null && Model.Manifest.SocialIdps.Count > 0)
         {
             foreach (var socialIdp in Model.Manifest.SocialIdps)
             {

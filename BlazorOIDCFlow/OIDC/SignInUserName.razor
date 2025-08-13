@@ -21,26 +21,28 @@
             <!-- Wizard Buttons -->
 
             <div class="d-flex justify-content-between mb-3 wizard-buttons">
-                <div>
-                    <button type="button" class="btn btn-link" @onclick="HandleSignupClick">
-                        @Localizer["label_create_account"]
-                    </button>
-                </div>
+                @if (Model.Manifest.DisableLocalAccountCreation == false)
+                {
+                    <div>
+                        <button type="button" class="btn btn-link" @onclick="HandleSignupClick">
+                            @Localizer["label_create_account"]
+                        </button>
+                    </div>
+                }
                 <div>
                     <button type="submit" class="btn btn-primary">@Localizer["label_next"]</button>
                 </div>
             </div>
         </EditForm>
-
         @if (Model?.Manifest?.SocialIdps != null && Model.Manifest.SocialIdps.Count > 0)
-         {
+        {
             <!-- Separator -->
             <hr />
             <!-- Paragraph -->
             <p class="text-center">@Localizer["message_or_login_with_social_provider"]</p>
 
             <div class="d-flex justify-content-center social-buttons">
-                
+               
             @foreach (var idp in Model.Manifest.SocialIdps)
             {
                 <button type="button" class="btn btn-info d-flex align-items-center justify-content-center m-1 social-btn" @onclick="() => HandleSocialLoginButtonClick(idp.Slug)">
