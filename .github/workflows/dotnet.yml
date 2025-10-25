@@ -20,7 +20,7 @@ on:
 
 env:
   BINARY: "server"
-  GO_VERSION: "1.24"
+  GO_VERSION: "1.25"
   BASE_VERSION: "1.0.0"
   IMAGE_NAME: "NA"
 
@@ -54,7 +54,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "^${{ env.GO_VERSION }}"
 
