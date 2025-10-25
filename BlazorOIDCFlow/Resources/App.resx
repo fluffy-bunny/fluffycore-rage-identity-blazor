@@ -153,8 +153,8 @@
   <data name="label_back" xml:space="preserve">
     <value>Back</value>
   </data>
-  <data name="message_no_socials_availabel" xml:space="preserve">
-    <value>No social IDPs availabel.</value>
+  <data name="message_no_socials_available" xml:space="preserve">
+    <value>No social IDPs available.</value>
   </data>
   <data name="message_or_create_an_account_with_a_social_provider" xml:space="preserve">
     <value>or create an account with a social provider</value>
